@@ -80,6 +80,7 @@ export default SearchPage;
 export const SearchBoxContainer = styled.div`
 
   width: 50%;
+  margin-top:150px;
 /*   height: 300px; */
   max-width: 800px;
   min-width: 500px;

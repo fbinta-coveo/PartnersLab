@@ -1,7 +1,13 @@
-import HeroImage from "../assets/Hero.svg";
+import HeroImage from "../assets/HeroImage.jpg";
 import CoveoLogo from "../assets/CoveoLogo.svg";
 import RecommendationDefault from "../assets/Recommendation.jpg";
 import { RecommendationType } from "./Types/ConfigTypes";
+import { ic_menu } from 'react-icons-kit/md/ic_menu';
+import { ic_shopping_bag_outline } from 'react-icons-kit/md/ic_shopping_bag_outline';
+import { ic_email_outline } from 'react-icons-kit/md/ic_email_outline';
+import { search } from 'react-icons-kit/feather/search';
+import {heart} from 'react-icons-kit/feather/heart'
+import {plane} from 'react-icons-kit/fa/plane'
 
 /* To import your Demo Logo
 1. Place the logo in the assets Folder
@@ -23,30 +29,51 @@ export const DefaultRecommendationImage = RecommendationDefault;
 // TODO When generating JSON, dynamically generate internationalization config in admin console to include these elements.
 export const HeaderConfig = [
   {
-    title: "Service Support",
+    title: 'Airport Shop',
+    redirectTo: '/shop',
+    icon: plane, // Icon object
+  },
+
+  {
+    title: '',
+    redirectTo: '/search',
+    icon: heart, // Icon object
+  },
+
+  {
+    title: '',
+    redirectTo: '/contact',
+    icon: ic_shopping_bag_outline, // Icon object
+  },
+];
+
+
+
+export const TopHeaderConfig = [
+  {
+    title: "Products",
     redirectTo: "/home",
   },
   {
-    title: "Ecommerce",
+    title: "Applications",
     redirectTo: "/",
   },
   {
-    title: "Workplace",
+    title: "Service & Support",
     redirectTo: "/",
   },
   {
-    title: "Site Search",
+    title: "Ressources",
     redirectTo: "/",
   },
   {
-    title: 'AI Labs',
+    title: "Our Company",
     redirectTo: "/",
   },
-  {
-    title: 'Docs',
-    redirectTo: "/docs",
-  }
+  
 ];
+
+
 
 export const HeroConfig = {
   title: "The only AI platform specifically built to make every digital experience delightful, relevant, and profitable",
@@ -55,16 +82,16 @@ export const HeroConfig = {
   buttonText: "Explore",
   onClickButtonRedirect: "/search",
   width : "100%",
-  height: "700px",
+  height: "800px",
 
   // Hero Image Text CSS config
   titleFontSize : "32px",
   titleFontWeight : "600",
-  titleColor : '#FFFFFF',
+  titleColor : '#000000',
   titleWidth : "600px",
   subTitleWidth : "550px",
   subTitleFontSize : "16px",
-  subTitleColor : '#FFFFFF'
+  subTitleColor : '#000000'
 
 };
 
@@ -74,7 +101,7 @@ export const HomeRecommendationConfig: RecommendationType[] = [
     description: "Here are your personalized recommendations",
     numberOfResults: 15,
     imageField: "ec_images",
-    pipeline: "Sports",
+    pipeline: "cmh-recommendations-sandbox",
     searchHub: "default",
     id: "Recommendation",
     active : true,       // changing to "false" will hide this recommendation
@@ -85,7 +112,7 @@ export const HomeRecommendationConfig: RecommendationType[] = [
     description: "Here are your personalized recommendations",
     numberOfResults: 15,
     imageField: "ec_images",
-    pipeline: "Sports",
+    pipeline: "cmh-recommendations-sandbox",
     searchHub: "default",
     id: "Recommendation",
     active : true,       // changing to "false" will hide this recommendation
@@ -96,7 +123,7 @@ export const HomeRecommendationConfig: RecommendationType[] = [
     description: "Here are your personalized recommendations",
     numberOfResults: 8,
     imageField: "ec_images",
-    pipeline: "Sports",
+    pipeline: "cmh-recommendations-sandbox",
     searchHub: "default",
     id: "Recommendation",
     active : true,       // changing to "false" will hide this recommendation

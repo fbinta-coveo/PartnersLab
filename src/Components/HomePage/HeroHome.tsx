@@ -10,18 +10,21 @@ const HeroHome: React.FC = ()=>{
     const navigate = useNavigate();
     const { getText } = useContext(LanguageContext)
     return <Wrapper>
+        <HeroWrapper>
         <TextWrapper>
         <Title>{HeroConfig.title && getText(HeroConfig.title, HeroConfigTranslations, 'title')}</Title>
         <SubTitle>{HeroConfig.description && getText(HeroConfig.description, HeroConfigTranslations, "description")}</SubTitle>
         <Button onClick = {()=> window.open(HeroConfig.onClickButtonRedirect)}>{HeroConfig.buttonText && getText(HeroConfig.buttonText, HeroConfigTranslations, "buttonText")}</Button>
         </TextWrapper>
+        <ImageWrapper></ImageWrapper>
+        </HeroWrapper>
     </Wrapper>
 };
 
 
 
 const Wrapper = styled.div`
-height: ${HeroConfig.height};
+/* height: ${HeroConfig.height};
 width: ${HeroConfig.width};
 margin: 0 auto;
 font-family: inherit;
@@ -32,7 +35,7 @@ padding-left: 120px;
 background-position: center;
 background-color: #333357;
 background-repeat: no-repeat;
-background-size: cover;
+background-size: contain;
 background-image: url(${HeroConfig.background});
 @media (max-width: ${Theme.mobileSize}px) {
     padding-left: 10px;
@@ -40,11 +43,57 @@ background-image: url(${HeroConfig.background});
    justify-content: flex-start;
    padding-top: 80px;
    height: ${Number(HeroConfig.height.split("px")[0]) - 150}px;
-}
+} */
 `
+const HeroWrapper = styled.div`
+    width: 100%;
+    padding-top: 65px;
+    font-family: inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-left: 320px;
+    margin-top:100px;
+    background-position: center;
+    background-color: #ffffff;
+
+    @media (max-width: ${Theme.mobileSize}px) {
+        padding-left: 10px;
+        width: 100vw;
+        justify-content: flex-start;
+        padding-top: 80px;
+        height: ${Number(HeroConfig.height.split("px")[0]) - 150}px;
+    }
+`;
+const ImageWrapper = styled.div`
+    height: ${HeroConfig.height};
+    width: ${HeroConfig.width};
+    margin: 0 auto;
+    font-family: inherit;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    background-position: center;
+    background-color: #ffffff;
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-image: url(${HeroConfig.background});
+
+    @media (max-width: ${Theme.mobileSize}px) {
+        padding-left: 10px;
+        width: 100vw;
+        justify-content: flex-start;
+        padding-top: 80px;
+        height: ${Number(HeroConfig.height.split("px")[0]) - 150}px;
+    }
+`;
+
+
+
 
 const TextWrapper = styled.div`
 width: 100%;
+margin-top: 50px;
 
 `
 
