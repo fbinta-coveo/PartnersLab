@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@coveo/atomic-react": "^2.8.8",
-    "@coveo/headless": "^2.48.0",
+    "@coveo/headless": "^2.71.0",
     "@coveo/search-token-server": "^1.29.2",
     "@coveord/platform-client": "^33.1.0",
     "@emotion/react": "^11.9.0",
@@ -12,7 +12,6 @@
     "@mui/icons-material": "^5.11.9",
     "@mui/material": "^5.6.0",
     "autosuggest-highlight": "^3.3.0",
-    "axios": "^1.7.2",
     "concurrently": "^5.3.0",
     "dotenv": "^8.6.0",
     "firebase": "^9.9.3",
@@ -26,7 +25,6 @@
     "react-loading-skeleton": "^3.1.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "react-spinners": "^0.14.1",
     "styled-components": "^5.3.5",
     "typescript": "^4.7.3"
   },

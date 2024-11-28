@@ -2,11 +2,10 @@ import {FunctionComponent, useEffect, useState, useContext} from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {
-  buildSearchBox,
   SearchBox as HeadlessSearchBox,
   SearchBoxOptions,
 } from '@coveo/headless';
-import EngineContext from '../../common/engineContext';
+import EngineContext, { CommerceEngineContext } from '../../common/engineContext';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import Button from '@mui/material/Button';
@@ -14,11 +13,12 @@ import styled from 'styled-components';
 import { Icon } from "react-icons-kit";
 import { search } from "react-icons-kit/feather/search";
 import { SpeechRecognitionButton } from './SpeechRecognitionButton';
-import {ImageRecognitionButton} from "./ImageRecognition";
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import {SearchConfigTranslations} from "../../config/InternationalizationConfig";
 import {LanguageContext} from "../Internationalization/LanguageUtils";
+import { buildSearchBox } from '@coveo/headless/commerce';
+import { STANDALONE_SEARCHBOX_KEY } from '../HomePage/HomeSearchBox';
 
 interface SearchBoxProps {
   controller: HeadlessSearchBox;
@@ -36,6 +36,10 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
 
   const onPressSearchButton = ()=>{
     controller.submit();
+    if (!window.location.href.includes('/search'))
+      {
+        window.location.href = '/search';
+      }
   }
 
   return (
@@ -45,9 +49,11 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
       inputValue={state.value}
       onInputChange={(_, newInputValue) => {
         controller.updateText(newInputValue);
+        localStorage.setItem(STANDALONE_SEARCHBOX_KEY, JSON.stringify({value: newInputValue}));
       }}
       onChange={() => {
         controller.submit();
+
       }}
       options={state.suggestions.map((suggestion) => suggestion.rawValue)}
       freeSolo
@@ -70,7 +76,6 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
                     )
                   }
                   <SpeechRecognitionButton controller={controller}></SpeechRecognitionButton>
-                  <ImageRecognitionButton controller={controller}></ImageRecognitionButton>
                 </EndButtons>
               ),
             }}
@@ -104,12 +109,24 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
 
 const SearchBox = () => {
   const options: SearchBoxOptions = {numberOfSuggestions: 8};
-  const engine = useContext(EngineContext)!;
-  const controller = buildSearchBox(engine, {options});
 
-// This is added to fix a bug which does not allow to see query suggestion on first click.  
-  if(controller.state.value === ""){
+  const commerceEngine = useContext(CommerceEngineContext)!
+
+
+  if (!commerceEngine){
+    return null;
+  }
+
+  const controller = buildSearchBox(commerceEngine, {options});
+
+  const searchqueryObject = localStorage.getItem(STANDALONE_SEARCHBOX_KEY)? JSON.parse(localStorage.getItem(STANDALONE_SEARCHBOX_KEY) as string): null;
+
+  if(searchqueryObject){
+    controller.updateText(searchqueryObject.value);
+    controller.submit();
+  }else if(controller.state.value === ""){
     controller.updateText('');
+    controller.submit();
   }
   
   return <SearchBoxRenderer controller={controller} />;

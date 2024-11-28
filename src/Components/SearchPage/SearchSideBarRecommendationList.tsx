@@ -26,7 +26,7 @@ interface RecommendationListProps {
   engine: RecommendationEngine;
   NumberofResults: number;
   title: string;
-  videoRecommendation: boolean;
+  HomeBottomRecommendation: boolean;
   imageField: string;
 }
 
@@ -109,8 +109,8 @@ export const RecommendationListRenderer: FunctionComponent<
                       <div key={recommendation.title + recommendation.uniqueId}>
                         <RecommendtionCardSmall
                           video={
-                            props.videoRecommendation
-                              ? props.videoRecommendation
+                            props.HomeBottomRecommendation
+                              ? props.HomeBottomRecommendation
                               : recommendation.raw.sourcetype === "YouTube"
                               ? true
                               : false
@@ -154,7 +154,7 @@ interface SearSearchSideBarRecommendationListProps {
   pipeline?: string;
   NumberofResults?: number;
   title?: string;
-  videoRecommendation?: boolean;
+  HomeBottomRecommendation?: boolean;
   imageField?: string;
   searchHub: string;
 }
@@ -165,7 +165,7 @@ const SearchSideBarRecommendationList: FunctionComponent<
   pipeline = "default",
   NumberofResults = 0,
   title = "",
-  videoRecommendation = false,
+  HomeBottomRecommendation = false,
   imageField = "",
   searchHub,
 }) => {
@@ -203,7 +203,7 @@ const SearchSideBarRecommendationList: FunctionComponent<
       controller={recController}
       engine={recommendationEngine}
       NumberofResults={NumberofResults}
-      videoRecommendation={videoRecommendation}
+      HomeBottomRecommendation={HomeBottomRecommendation}
       imageField={imageField}
       title={title}
     />

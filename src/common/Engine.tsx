@@ -6,7 +6,7 @@ import {
   TokenModel,
 } from '@coveord/platform-client';
 import { KEY_NAME_CONTEXT_DATA, KEY_NAME_PROFILE_SELECTED } from '../config/ProfileConfig';
-
+import { buildCommerceEngine } from '@coveo/headless/commerce';
 
 const PROFILE_SELECTED : string | null = localStorage.getItem(KEY_NAME_PROFILE_SELECTED);
 const CONTEXT_DATA = localStorage.getItem(KEY_NAME_CONTEXT_DATA);
@@ -49,6 +49,7 @@ export async function getSearchToken() {
   return token;
 }
 
+// Not used in the GDE-CAPI but kept here for reference
 export async function initializeHeadlessEngine() {
   return buildSearchEngine({
     configuration: {
@@ -57,8 +58,33 @@ export async function initializeHeadlessEngine() {
       accessToken: await getSearchToken(),
       renewAccessToken: getSearchToken,
       search :{
-        searchHub : process.env.REACT_APP_SEARCH_HUB!,
-        pipeline: process.env.REACT_APP_SEARCH_ENGINE_PIPELINE!
+        searchHub : "default",
+      }
+    },
+  });
+}
+
+
+export async function initializeCommerceHeadlessEngine() {
+
+  return buildCommerceEngine({
+    configuration: {
+      organizationEndpoints : getOrganizationEndpoints(process.env.REACT_APP_ORGANIZATION_ID!),
+      organizationId: process.env.REACT_APP_ORGANIZATION_ID!,
+      accessToken: await getSearchToken(),
+      renewAccessToken: getSearchToken,
+      context: {
+        //@ts-ignore
+        currency : process.env.REACT_APP_COMMERCE_ENGINE_CURRENCY,
+        country: process.env.REACT_APP_COMMERCE_ENGINE_COUNTRY,
+        language : process.env.REACT_APP_COMMERCE_ENGINE_LANGUAGE,
+        view: {
+          url: process.env.REACT_APP_COMMERCE_ENGINE_URL + window.location.pathname,
+        },
+      },
+      analytics : {
+        trackingId : process.env.REACT_APP_COMMERCE_ENGINE_TRACKING_ID,
+
       }
     },
   });
@@ -88,7 +114,7 @@ async function ensureClientTokenGenerated() {
        * An API key with the impersonate privilege in the target organization.
        * See https://docs.coveo.com/en/1718/manage-an-organization/manage-api-keys#add-an-api-key
        */
-      accessToken: process.env.REACT_APP_API_KEY!,
+      accessToken: process.env.REACT_APP_COMMERCE_ENGINE_API_KEY!,
     });
 
   /*   try{ */

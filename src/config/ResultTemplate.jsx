@@ -1,241 +1,120 @@
-import {ResultsImageField} from "./SearchConfig";
-import {SearchConfigTranslations} from "./InternationalizationConfig";
-import {Theme} from "./theme";
-import {useContext} from "react";
-import {LanguageContext} from "../Components/Internationalization/LanguageUtils";
-import { encodeCustomSearchTab } from "../Components/SearchPage/SearchTabs";
+import React from 'react';
+import { Grid, Card, CardMedia, CardContent, Typography, Rating, Chip, Skeleton } from '@mui/material';
+import styled from 'styled-components';
 
-const MyResultTemplateForYouTubeVideos = ({ result }) => {
-  return (
-    <>
-      <style>{myStyles}</style>
-      <atomic-result-section-badges>
-        <atomic-field-condition must-match-is-recommendation="true">
-          <atomic-result-badge label="Recommended"></atomic-result-badge>
-        </atomic-field-condition>
-        <atomic-field-condition must-match-is-top-result="true">
-          <atomic-result-badge label="Top Result"></atomic-result-badge>
-        </atomic-field-condition>
-      </atomic-result-section-badges>
-
-      <atomic-result-section-actions class="date-text">
-        <atomic-result-date></atomic-result-date>
-      </atomic-result-section-actions>
-
-      <atomic-result-section-visual image-size="large" class="yt-thumbnail">
-        <atomic-result-image field="ytthumbnailurl"></atomic-result-image>
-      </atomic-result-section-visual>
-
-      <atomic-result-section-title>
-        <atomic-result-link></atomic-result-link>
-      </atomic-result-section-title>
-
-      <atomic-result-section-excerpt>
-        <atomic-result-text field="excerpt"></atomic-result-text>
-      </atomic-result-section-excerpt>
-    </>
-  );
-};
-
-const MyDefaultTemplate = ({ result, quickviewObj }) => {
-  return (
-    <>
-      <style>{myStyles}</style>
-      <atomic-result-section-badges>
-        <atomic-field-condition must-match-is-featured="true">
-          <atomic-result-badge label="Featured" />
-        </atomic-field-condition>
-        <atomic-field-condition must-match-is-top-result="true">
-          <atomic-result-badge label="Top Result" />
-        </atomic-field-condition>
-      </atomic-result-section-badges>
-      <atomic-result-section-title>
-        <div style={{ display: "flex", alignItems: "center" }}>
-        <atomic-result-link ><a slot="attributes" target="_blank" download href={result.clickuri}></a></atomic-result-link>
-          <span style={{ lineHeight: "0px", marginLeft: "10px" }}>
-            <atomic-quickview sandbox="allow-top-navigation allow-same-origin"></atomic-quickview>
-          </span>
-        </div>
-      </atomic-result-section-title>
-      <atomic-result-section-visual>
-        <atomic-result-icon></atomic-result-icon>
-      </atomic-result-section-visual>
-      <atomic-result-section-excerpt>
-        <atomic-result-text field="excerpt"></atomic-result-text>
-      </atomic-result-section-excerpt>
-      <atomic-result-section-bottom-metadata>
-        <atomic-result-fields-list>
-          <atomic-field-condition class="field" if-defined="author">
-            <span className="field-label">
-              <atomic-text value="author"></atomic-text>:
-            </span>
-            <atomic-result-text field="author"></atomic-result-text>
-          </atomic-field-condition>
-
-          <atomic-field-condition class="field" if-defined="source">
-            <span className="field-label">
-              <atomic-text value="source"></atomic-text>:
-            </span>
-            <atomic-result-text field="source"></atomic-result-text>
-          </atomic-field-condition>
-
-          <atomic-field-condition class="field" if-defined="language">
-            <span className="field-label">
-              <atomic-text value="language"></atomic-text>:
-            </span>
-            <atomic-result-multi-value-text field="language"></atomic-result-multi-value-text>
-          </atomic-field-condition>
-
-          <atomic-field-condition class="field" if-defined="filetype">
-            <span className="field-label">
-              <atomic-text value="fileType"></atomic-text>:
-            </span>
-            <atomic-result-text field="filetype"></atomic-result-text>
-          </atomic-field-condition>
-
-          <span className="field">
-            <span className="field-label">Date:</span>
-            <atomic-result-date></atomic-result-date>
-          </span>
-        </atomic-result-fields-list>
-      </atomic-result-section-bottom-metadata>
-    </>
-  );
-};
-const CommerceTemplate = ({result, quickviewObj}) => {
-    /*Update the price field here. Currently set to ec_price"*/
-    const priceField = "ec_price"
-    return (
-        <>
-            <style>{commerceStyles}</style>
-            <atomic-result-section-badges>
-                <div style={{height: "30px", width: "100px"}}>
-                    <atomic-field-condition must-match-is-featured="true">
-                        <atomic-result-badge label="Featured"/>
-                    </atomic-field-condition>
-                    <atomic-field-condition must-match-is-top-result="true">
-                        <atomic-result-badge label="Top Results"/>
-                    </atomic-field-condition>
-                </div>
-            </atomic-result-section-badges>
-
-            <atomic-result-section-visual image-size="large" class="product-image">
-                <atomic-result-image field={ResultsImageField}></atomic-result-image>
-            </atomic-result-section-visual>
-
-            <atomic-result-section-title class="title">
-                <atomic-result-link></atomic-result-link>
-            </atomic-result-section-title>
-            <atomic-result-section-bottom-metadata>
-                {/* Remove the line below to remove the price tag */}
-                <p className="price">{result.raw[priceField] ? result.raw[priceField] : " "}</p>
-                <button className="addtocart-button">Add to Cart</button>
-            </atomic-result-section-bottom-metadata>
-        </>
-    );
-};
-const MyResultTemplateFunction = (result, quickviewObj, setDisplayStyle) => {
-
-    const regexPattern = /\/search\/([^/#\s]+)/;
-
-    const matches = window.location.href.match(regexPattern);
-    let tab = null;
-    if (matches) {
-      const extractedString = matches[1];
-      tab = extractedString;
-    } 
-
-
-    /* select result template by tab example*/
- /*if(tab === encodeCustomSearchTab("SharePoint")) {
-      setDisplayStyle('grid')
-      return <MyResultTemplateForYouTubeVideos result={result} quickviewObj={quickviewObj} />;
- } */
-
-
-  setDisplayStyle('list')
-  if (result.raw.filetype === "YouTubeVideo") {
-    return <MyResultTemplateForYouTubeVideos result={result} />;
-  }
-  if (result.raw.objecttype === "Product") {
-    setDisplayStyle('grid')
-    return <CommerceTemplate result={result} quickviewObj={quickviewObj} />;
-  }
-  return <MyDefaultTemplate result={result} quickviewObj={quickviewObj} />;
-};
-
-export default MyResultTemplateFunction;
-
-const myStyles = `
-.field {
+const StyledCard = styled(Card)`
   display: flex;
-  white-space: nowrap;
-  align-items: center;
-}
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  border: 1px solid #f5f5f5;
+  box-shadow: 0 0px 2px 0 rgba(0,0,0,0.1);
 
-.field-label {
-  font-weight: 500;
-  padding-bottom : 3px;
-  margin-right: 0.25rem;
-}
-
-.metadata{
-  display : flex;
-  width : 300px;
-}
-
-atomic-result-image{
-  width : 200px;
-  margin-right : 20px
-}
-
-atomic-result-section-visual{
-  width : 300px;
-  height : 300px
-}
-
-.yt-thumbnail{
-  width : 200px !important;
-  height : 100px !important;
-}
-
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 0px 5px 2px rgba(0,0,0,0.1);
+  }
 `;
 
-
-const commerceStyles = `
-
-atomic-result-image{
-  width : 200px;
-  margin-right : 20px
-}
-.product-image{
-  width : auto !important;
-  height : 300px !important;
-  grid-column-start: span 2 !important;
-}
-
-price {
- display: block;
- width : 50px;
- min-width : 50px;
- padding-right: 50px;
-}  
-atomic-result-section-visual{
-  width : 300px;
-  height : 300px
-}
-
-.addtocart-button{
-  width: 200px;
-  height : 50px;
-  margin-left: 40px
-  padding-left: 40px
-  margin-top : 10px;
-  background : ${Theme.button};
-  color : ${Theme.buttonText};
-  border-radius : 6px;
-  display: block;
-}
-
-
+const StyledGrid = styled(Grid)`
+  display: flex;
+  flex-direction: column;
 `;
+
+const VariantContainer = styled.div`
+  display: flex;
+  gap: 5px;
+  margin: 5px 0;
+`
+
+const Variant = styled.img`
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 5px;
+  border: 1px solid #f5f5f5;
+`
+
+const formatPrice = (price) => {
+  return price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+};
+
+const ResultTemplate = ({ controller, product }) => {
+  const [productImage, setProductImage] = React.useState(product.ec_images[0]);
+  const interactiveResult = controller.interactiveProduct({options :{
+    product: product,
+  }})
+
+  return (
+    <StyledGrid item xs={12} sm={6} md={3} p={1} key={product.permanentid}>
+      <StyledCard onClick={() => {
+        interactiveResult.select()
+        window.open(product.clickUri)
+        }}>
+        <CardMedia
+          component="img"
+          height="250px"
+          image={productImage} 
+          alt={product.ec_name}
+        />
+        <CardContent>
+          <Typography gutterBottom variant="h7" sx={{ fontWeight: "600" }} component="div">
+            {product.ec_name}
+          </Typography>
+          {product.ec_rating && <Rating name="read-only" value={product.ec_rating} size="small" readOnly />}
+          { product.ec_price &&
+            (<Typography variant="h6" color="text.secondary">
+              $ {product.ec_price}
+            </Typography>)
+          }
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+            >
+            {product.ec_description}
+          </Typography>
+            <VariantContainer>
+            {
+              product.children.length > 0 && product.children.slice(1,6).map((variant) => (
+                <Variant src={variant.ec_images[0]}
+                  key={variant.permanentid}
+                  alt={variant.ec_name}
+                  onMouseOver={() => setProductImage(variant.ec_images[0])}
+                  onMouseOut={() => setProductImage(product.ec_images[0])}
+                  onClick={() => window.open(variant.clickUri)}
+                 />
+              ))
+            }
+            </VariantContainer>
+          {product.ec_brand && <Chip label={product.ec_brand} size='small' sx={{ marginTop: "15px", borderRadius: "3px" }} />}
+        </CardContent>
+      </StyledCard>
+    </StyledGrid>
+  );
+};
+
+export const ResultSkeleton = () => {
+  return (
+    <StyledGrid item xs={12} sm={6} md={3} p={1}>
+      <StyledCard>
+          <Skeleton variant="rectangular" width={"100%"} height={"270px"} />
+          <CardContent sx={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+              <Skeleton variant="rounded" width={210} height={20} />
+              <Skeleton variant="rounded" width={150} height={20} />
+              <Skeleton variant="rounded" width={70} height={30} />
+              <Skeleton variant="rounded" width={210} height={50} />
+              <Skeleton variant="rounded" width={70} height={20} />
+          </CardContent>
+      </StyledCard>
+    </StyledGrid>
+  );
+}
+
+export default ResultTemplate;

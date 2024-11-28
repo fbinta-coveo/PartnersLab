@@ -28,15 +28,24 @@ export const ProfileConfig = [
   {
     name: "Adam Miller",
     email: "amiller@coveo.com",
+    language : "en",
     profile: "https://cdn.secta.ai/tmp/marko-headshot.jpeg",
     context: [
       {
         active: true,
-        keyName: "dictField",
-        keyValue: "key1",
+        keyName: "country",
+        keyValue: "US",
         customQRF: false,
-        disabled : true, 
-        isDictionaryContext: true
+        disabled : false, 
+        isDictionaryContext: false
+      },
+      {
+        active: true,
+        keyName: "currency",
+        keyValue: "USD",
+        customQRF: false,
+        disabled : false, 
+        isDictionaryContext: false
       },
       {
         active: true,
@@ -51,16 +60,25 @@ export const ProfileConfig = [
   {
     name: "Emily Davis",
     email: "edavis@coveo.com",
+    language : "fr",
     profile:
       "https://cdn.pixabay.com/photo/2023/03/13/11/19/ai-generated-7849618_960_720.jpg",
     context: [
       {
         active: true,
-        keyName: "dictField",
-        keyValue: "key2",
+        keyName: "country",
+        keyValue: "US",
         customQRF: false,
-        disabled : true,
-        isDictionaryContext: true
+        disabled : false, 
+        isDictionaryContext: false
+      },
+      {
+        active: true,
+        keyName: "currency",
+        keyValue: "USD",
+        customQRF: false,
+        disabled : false, 
+        isDictionaryContext: false
       },
       {
         active: true,
@@ -69,7 +87,7 @@ export const ProfileConfig = [
         customQRF: false,
         disabled : true, 
         isDictionaryContext: false
-      }
+      },
     ],
   },
 ];

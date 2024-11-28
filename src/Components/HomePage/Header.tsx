@@ -1,29 +1,56 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Theme } from "../../config/theme";
+import styled from "styled-components";
 import { Icon } from "react-icons-kit";
 import { search } from "react-icons-kit/feather/search";
-import { x } from "react-icons-kit/feather/x";
-import { useNavigate } from "react-router-dom";
-import { HeaderConfig, HeaderLogo } from "../../config/HomeConfig";
-import { CustomContextContext } from "../CustomContext/CustomContextContext";
-import Fade from "@mui/material/Fade";
-import Popover from "@mui/material/Popover";
-import styled from "styled-components";
-import ContextForm from "../CustomContext/ContextForm";
-import HomeResultsSearchBox from "./HomeResultsSearchBox";
-import HomeProductsSearchBox from "./HomeProductsSearchBox";
 import HomeSearchBox from "./HomeSearchBox";
-import _ from 'lodash';
-import { HomeHeaderConfigTranslations, InternationalizationEnabled } from "../../config/InternationalizationConfig";
-import { LanguageContext } from "../Internationalization/LanguageUtils";
+import { x } from "react-icons-kit/feather/x";
+import Fade from "@mui/material/Fade";
+import {  useNavigate } from "react-router-dom";
+import { HeaderConfig, HeaderLogo } from "../../config/HomeConfig";
+import Popover from "@mui/material/Popover";
+import ContextForm from "../CustomContext/ContextForm";
+import { CustomContextContext } from "../CustomContext/CustomContextContext";
+import { CommerceEngine, buildProductListing } from "@coveo/headless/commerce";
+import EngineContext from "../../common/engineContext";
+import BasicMenu from "./Menu";
+import HomeProductsSearchBox from "./HomeProductsSearchBox";
 import { InternationalizationDropdown } from "../Internationalization/InternationalizationDropdown";
+import { InternationalizationEnabled, HomeHeaderConfigTranslations } from "../../config/InternationalizationConfig";
+import { LanguageContext } from "../Internationalization/LanguageUtils";
 
 const Header: React.FC = () => {
+
+
+
+/*   const plpListResponse = await fetch(
+    new URL(
+      `${organizationEndpoints.admin}/rest/organizations/${process.env.REACT_APP_ORGANIZATION_ID}/commerce/v2/configurations/listings?page=0&perPage=100`,
+    ),
+    { method: 'GET', headers: { Authorization: `Bearer ${process.env.PRODUCT_LISTING_API_KEY}` } },
+  );
+
+  const json = await plpListResponse.json();
+
+  const urlValidator = /\/browse\/promotions\//;
+  const validItems = json.items.filter((item) => urlValidator.test(item.matching.url));
+
+  const listings = validItems.map((item) => {
+    const splitUrl = item.matching.url.split('/');
+    const name = splitUrl[splitUrl.length - 1].replace(/-/g, ' ').trim();
+
+    return { name: name.charAt(0).toUpperCase() + name.slice(1), urls: [item.matching.url] };
+  }); */
+
+
+
+
+
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const navigate = useNavigate();
-  const { getProfile } = useContext(CustomContextContext);
-  const { getText } = useContext(LanguageContext);
-  const onSearchPage = window.location.pathname.includes("search");
+  const { getProfile } = useContext(CustomContextContext)
+  const { getText } = useContext(LanguageContext)
+  const onSearchPage = window.location.pathname.includes("search") || window.location.pathname.includes("browse") || window.location.pathname.includes("product") || window.location.pathname.includes("plp") 
   const toggleSearchBox = () => {
     if (onSearchPage) {
       const input = document.querySelector(".search-box input");
@@ -65,13 +92,13 @@ const Header: React.FC = () => {
         <Logo src={HeaderLogo} onClick={() => navigate("/home")} />
         <RightWrapper>
           <LinkWrapper>
-            {HeaderConfig.map((item) => {
+            {HeaderConfig.map((item, index) => {
+
+                if(index === 0) return <BasicMenu/>
+
               return (
                 <NavigationLink key={item.title} href={item.redirectTo}>
-                  {
-                    // @ts-ignore
-                    getText(item.title, HomeHeaderConfigTranslations[_.camelCase(item.title)], "title")
-                  }
+                  {item.title && getText(item.title, HomeHeaderConfigTranslations, item.title)}
                 </NavigationLink>
               );
             })}
@@ -115,7 +142,7 @@ const Header: React.FC = () => {
         <SearchContainer>
           <SearchBoxContainer>
             {!onSearchPage && 
-             <HomeSearchBox toggleSearchBox={toggleSearchBox} /> 
+             <HomeProductsSearchBox toggleSearchBox={toggleSearchBox} /> 
             }
           </SearchBoxContainer>
         </SearchContainer>
@@ -157,7 +184,7 @@ const LinkWrapper = styled.ul`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 850px;
+  width: 800px;
   @media (max-width: 1000px) {
     width: auto;
   }
@@ -229,9 +256,6 @@ font-family: inherit;
 margin-left: 15px;
 color : ${Theme.secondaryText};
 text-overflow: ellipsis;
-@media (max-width: ${Theme.mobileSize}px){
-  display: none;
-}
 `
 
 
@@ -248,9 +272,6 @@ const ProfileIconContainer = styled.button`
 }
 &:active{
   transform: scale(0.85);
-}
-@media (max-width: ${Theme.mobileSize}px) {
-  width: 40px;
 }
 
 `

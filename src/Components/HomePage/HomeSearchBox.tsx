@@ -4,9 +4,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import {
   SearchBox as HeadlessSearchBox,
   StandaloneSearchBoxOptions,
-  buildStandaloneSearchBox,buildSearchBox
 } from '@coveo/headless';
-import EngineContext from '../../common/engineContext';
+import EngineContext, { CommerceEngineContext } from '../../common/engineContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import styled from 'styled-components';
@@ -15,23 +14,24 @@ import match from 'autosuggest-highlight/match';
 import { Icon } from "react-icons-kit";
 import { search } from "react-icons-kit/feather/search";
 import { SpeechRecognitionButton } from '../SearchPage/SpeechRecognitionButton';
-import {ImageRecognitionButton} from "../SearchPage/ImageRecognition";
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import {SearchConfigTranslations} from "../../config/InternationalizationConfig";
 import {LanguageContext} from "../Internationalization/LanguageUtils";
-
+import { buildSearchBox , buildStandaloneSearchBox, StandaloneSearchBox} from '@coveo/headless/commerce';
 
 interface SearchBoxProps {
-  controller: HeadlessSearchBox;
+  controller: StandaloneSearchBox;
   toggleSearchBox : ()=>void;
 }
+
+export const STANDALONE_SEARCHBOX_KEY = "CoveoStandaloneSearchBox";
 
 const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
   const {controller} = props;
   const [state, setState] = useState(controller.state);
   const { getText } = useContext(LanguageContext);
-
+  console.log("test", state)
     let navigate = useNavigate();
 
   useEffect(
@@ -41,11 +41,24 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
 
   const location = useLocation();
 
-  const onPressSearchButton = ()=>{
-        /*  */
+  const onPressSearchButton = (e)=>{
+  
+
         props.toggleSearchBox();
         controller.submit();
-        window.open('/search' + window.location.hash,"_self");
+        setState((prev)=>({...prev, redirectTo: '/search'}))
+  }
+ 
+  if (!state) {
+    return null;
+  }
+ 
+  if (state.redirectTo) {
+    const {redirectTo, value} = state;
+    const data = JSON.stringify({value});
+    localStorage.setItem(STANDALONE_SEARCHBOX_KEY, data);
+    window.location.href = redirectTo;
+    return null;
   }
 
   return (
@@ -56,12 +69,12 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
       onInputChange={(_, newInputValue) => {
         controller.updateText(newInputValue);
       }}
-      onChange={() => {
+      onChange={(e) => {
           if (controller.state.value !== '')
           {
             props.toggleSearchBox();
             controller.submit();
-            window.open('/search' + window.location.hash,"_self");
+            setState((prev)=>({...prev, redirectTo: '/search'}))
           }
       }}
       options={state.suggestions.map((suggestion) => suggestion.rawValue)}
@@ -85,7 +98,6 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
                   )
                 }
                 <SpeechRecognitionButton controller={controller}></SpeechRecognitionButton>
-                <ImageRecognitionButton controller={controller}></ImageRecognitionButton>
               </EndButtons>
             ),
           }}
@@ -122,9 +134,16 @@ interface  SearchBoxType {
 }
 
 const SearchBox = ({toggleSearchBox}: SearchBoxType) => {
-  const options: StandaloneSearchBoxOptions = {numberOfSuggestions: 8, redirectionUrl: '/search'};
   const engine = useContext(EngineContext)!;
-  const controller = buildSearchBox(engine, {options});
+  const commerceEngine = useContext(CommerceEngineContext)!;
+  if (!commerceEngine) {
+    return null;
+  }
+  const controller = buildStandaloneSearchBox(commerceEngine, {
+    options: {
+      redirectionUrl: '/search',
+    },
+  });
   controller.updateText('');
   return <SearchBoxRenderer controller={controller} toggleSearchBox = {toggleSearchBox} />;
 };

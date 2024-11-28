@@ -15,7 +15,6 @@ import { NoResultRecommendationConfig } from '../../config/SearchConfig';
 import styled from 'styled-components';
 import { Theme } from '../../config/theme';
 import RecommendtionCard, { SkeletonRecommendtionCard } from '../Recommendations/RecommendationCard';
-import QuerySuggestion from './QuerySuggestion';
 import { SearchConfigTranslations } from '../../config/InternationalizationConfig';
 import { LanguageContext } from "../Internationalization/LanguageUtils";
 
@@ -53,7 +52,9 @@ const NoResultRenderer: React.FC<NoResultProps> = (props) => {
     const skeletonArray = [1, 2, 3];
     const NumberOfResult = NoResultRecommendationConfig.NumberofResults;
     return  <MainWrapper>
-    <Title>{getText(NoResultRecommendationConfig.heading, SearchConfigTranslations, "noResultsHeading")}</Title>
+
+    <h2>{getText(NoResultRecommendationConfig.heading, SearchConfigTranslations, "noResults")}</h2>
+    <Title>{getText(NoResultRecommendationConfig.heading, SearchConfigTranslations, "popularResults")}</Title>
     
     {state.recommendations.length > 0 ? (
       <CardWrapper>
@@ -93,7 +94,6 @@ const NoResultRenderer: React.FC<NoResultProps> = (props) => {
         })}
       </CardWrapper>
     )}
-    {NoResultRecommendationConfig.showQuerySuggestion &&     <QuerySuggestion />}
 
   </MainWrapper>
 };
@@ -144,18 +144,22 @@ const NoResult: React.FC = () => {
 export default NoResult;
 
 const MainWrapper = styled.div`
-  width: 95%;
-  max-width : 1800px;
-  background-color: white;
-  border-radius: 24px;
-  text-align : center;
-  position: relative;
+/* position: relative;
+display: flex;
+flex-direction: column;
+align-items: center; */
+/*   width: 95%;
+  max-width : 1800px; */
+/*   background-color: white;
+  border-radius: 24px; */
+ /*  text-align : center; */
+/*   position: relative;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; */
 /*   box-shadow: 0px 10px 25px rgba(229, 232, 232, 0.6); */
-  margin-bottom: 30px;
+/*   margin-bottom: 30px; */
 `;
 
 const Title = styled.h2`
@@ -179,8 +183,8 @@ const CardWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
+/*   align-items: center;
+  justify-content: center; */
   max-width: 1500px;
   margin-top: 20px;
 `;

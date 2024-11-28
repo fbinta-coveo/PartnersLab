@@ -5,7 +5,7 @@ export interface DefaultSideBarRecommendationConfigType {
     searchHub : string,
     NumberofResults: number,
     title: string
-    videoRecommendation? : boolean
+    HomeBottomRecommendation? : boolean
     imageField? : typeof FieldToIncludesInSearchResults[number]
   }
 
@@ -37,7 +37,7 @@ export interface sideBarRecommendationConfigType {
   searchHub : string;
   NumberofResults: number;
   title: string;
-  videoRecommendation? : boolean
+  HomeBottomRecommendation? : boolean
   imageField? : typeof FieldToIncludesInSearchResults[number]
 }
 
@@ -58,5 +58,5 @@ export interface RecommendationType {
   id? : string,
   searchHub : string,
   active : boolean
-  type : "normal" | "carousel" // changing to "carousel" will show the recommendations in a courosel
+  type: "list" | "carousel" | "slider" 
 }

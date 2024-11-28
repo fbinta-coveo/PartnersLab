@@ -3,6 +3,7 @@ import usePersistedState from "../../customHooks/usePersistedState";
 import { ProfileConfig, KEY_NAME_CONTEXT_DATA, KEY_NAME_PROFILE_SELECTED } from "../../config/ProfileConfig";
 import EngineContext from "../../common/engineContext";
 import { buildContext, buildDictionaryFieldContext } from "@coveo/headless";
+import { buildContext as buildContextCommerce } from "@coveo/headless/commerce";
 import { LanguageContext } from "../Internationalization/LanguageUtils";
 import { InternationalizationEnabled, DefaultLanguage } from "../../config/InternationalizationConfig";
 
@@ -26,6 +27,31 @@ export const settingContextFromEngineFirstTime = (engine) => {
   if (InternationalizationEnabled)
     controller.add("language", filterdProfile[0]?.language ? filterdProfile[0]?.language : DefaultLanguage);
   dictionaryContext.set(DictionaryContextSetObject);
+};
+
+export const settingCommerceContextFromEngineFirstTime = (engine) => {
+  const controller = buildContextCommerce(engine);
+  const SavedContextData =  JSON.parse(window.localStorage.getItem(KEY_NAME_CONTEXT_DATA));
+  const SavedProfileSelected = JSON.parse(window.localStorage.getItem(KEY_NAME_PROFILE_SELECTED));
+  const Locale = JSON.parse(window.localStorage.getItem('locale'));
+  const ContextData = SavedContextData !== null? SavedContextData : ProfileConfig
+  const profileSelected =  SavedProfileSelected !== null? SavedProfileSelected : ProfileConfig[0].name
+
+  const filterdProfile = ContextData.filter(
+    (item) => item.name === profileSelected
+  );
+
+  const filterdContext = filterdProfile[0].context;
+  const { ContextSetObject } = configureContext(filterdContext);
+
+  if(ContextSetObject.hasOwnProperty('country') && ContextSetObject.country !== undefined)
+    controller.setCountry(ContextSetObject.country);
+
+  if(ContextSetObject.hasOwnProperty('currency') && ContextSetObject.currency !== undefined)
+    controller.setCurrency(ContextSetObject.currency);
+  
+  if (InternationalizationEnabled);
+    controller.setLanguage(Locale ? Locale : DefaultLanguage);
 };
 
 

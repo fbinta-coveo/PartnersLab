@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,85 +8,47 @@ import {
 import { Grid, Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
-import { initializeHeadlessEngine } from "./common/Engine";
+import { initializeCommerceHeadlessEngine, initializeHeadlessEngine } from "./common/Engine";
 import { SearchEngine } from "@coveo/headless";
+import { CommerceEngine } from "@coveo/headless/commerce";
 import HomePage from "./Components/HomePage/HomePage";
 import Header from "./Components/HomePage/Header";
-import { EngineProvider } from "./common/engineContext";
+import { CommerceEngineProvider, EngineProvider } from "./common/engineContext";
 import SearchPage from "./Components/SearchPage/SearchPage";
 import Footer from "./Components/HomePage/Footer";
 import QuickViewModal from "./Components/SearchPage/QuickViewModal";
 import QuickViewModalProvider from "./Components/SearchPage/QuickViewModalContext";
-import CustomContextProvider, { CustomContextContext, settingContextFromEngineFirstTime } from "./Components/CustomContext/CustomContextContext";
-import { AtomicSearchInterface } from "@coveo/atomic-react";
-import { FieldToIncludesInSearchResults } from "./config/SearchConfig";
-import CaseForm from "./Components/CaseClassification/CaseForm";
-import DocumentSuggestList from "./Components/DocuementSuggest/DocumentSuggestList";
+import CustomContextProvider, {  settingCommerceContextFromEngineFirstTime, settingContextFromEngineFirstTime } from "./Components/CustomContext/CustomContextContext";
 import { Theme } from "./config/theme";
-import { CoveoStandardTranslations, FacetTranslations, InternationalizationEnabled} from "./config/InternationalizationConfig";
 import { LanguageContextProvider, LanguageContext } from "./Components/Internationalization/LanguageUtils";
 import DocsPage from "./Components/HomePage/DocsPage";
+import PLP from "./Components/PLP/PLP";
+
 
 export default function App() {
   const [engine, setEngine] = React.useState<SearchEngine | null>(null);
-
-  const setCustomTranslations = (i18n: any, elementTranslations: any) => {
-    if (typeof elementTranslations != 'object' || elementTranslations == null)
-      return console.error("Unable to set custom translations as value isn't a valid object (Using default settings)")  
-
-    for (const key in elementTranslations) {
-      const element = elementTranslations[key];
-      const languagesDetected: string[] = Object.keys(element);
-      if (!languagesDetected || languagesDetected.length == 0)
-        continue;
-
-      languagesDetected.forEach((language) => {
-        i18n.addResourceBundle(language, 'translation', {
-          [key]: element[language]
-        });
-      })
-    }
-  }
-
-  const setFacetTranslations = (i18n: any, facetConfig: any) => {
-    if (typeof facetConfig != 'object' || facetConfig == null)
-      return console.error("Unable to set custom facet translations as value isn't valid");
-
-    for (const key in facetConfig) {
-      const facet = facetConfig[key];
-      if (!facet.hasOwnProperty("values"))
-        continue;
-      const values = facet["values"];
-      Object.keys(values).forEach((language: any) => {
-        i18n.addResourceBundle(language, `caption-${key}`, values[language])
-      });
-    }
-  }
+  const [commerceEngine, setCommerceEngine] = React.useState<CommerceEngine | null>(null);
 
   useEffect(() => {
     initializeHeadlessEngine().then((engine) => {
       settingContextFromEngineFirstTime(engine)
       setEngine(engine);
     }); 
+
+    initializeCommerceHeadlessEngine().then((engine) => {
+      settingCommerceContextFromEngineFirstTime(engine)
+      setCommerceEngine(engine);
+    });
   }, []);
 
   return (
     <>
-      {engine ? (
+      {(commerceEngine && engine) ? (
         <EngineProvider value={engine}>
+          <CommerceEngineProvider value={commerceEngine}>
           <LanguageContextProvider>
             <LanguageContext.Consumer>
               {({ selectedLanguage }) => (
-                <AtomicSearchInterface engine = {engine} fieldsToInclude={FieldToIncludesInSearchResults} language={selectedLanguage}
-                /* Example to add translations */
-                  localization={(i18n) => {
-                    if (!InternationalizationEnabled)
-                      return;
-                    setCustomTranslations(i18n, CoveoStandardTranslations)
-                    setFacetTranslations(i18n, FacetTranslations)
-                  }}
-                >
-                <style>{AtomicTheme}</style>
                   <QuickViewModalProvider>
                     <CustomContextProvider>
                       <Router>
@@ -105,14 +67,24 @@ export default function App() {
                           <Route path="/home" element={<HomePage />} />
                           <Route
                             path="/search"
-                            element={<SearchPage engine={engine} />}
+                            element={<SearchPage engine={commerceEngine} />}
                           />
                           <Route
                             path="/search/:filter"
-                            element={<SearchPage engine={engine} />}
+                            element={<SearchPage engine={commerceEngine} />}
                           />
-                          <Route path="/case-assist" element={<CaseForm />} />
-                          <Route path="/document-suggest" element={<DocumentSuggestList />} />
+                          <Route
+                          path ="/plp/:filter"
+                          element={<PLP/>}
+                          />
+                          <Route
+                            path="/plp/:filter/:secondfilter"
+                            element={<PLP />}
+                          />
+                          <Route
+                            path="/plp/:filter/:secondfilter/:thirdfilter"
+                            element={<PLP />}
+                          />
                           <Route path="/error" element={<Error />} />
                           <Route path="/docs" element={<DocsPage />} />
                           
@@ -121,10 +93,10 @@ export default function App() {
                       </Router>
                     </CustomContextProvider>
                   </QuickViewModalProvider>
-                </AtomicSearchInterface>
               )}
             </LanguageContext.Consumer>
           </LanguageContextProvider>
+          </CommerceEngineProvider>
         </EngineProvider>
       ) : (
         <Box
@@ -147,7 +119,7 @@ const isEnvValid = () => {
   const variables = [
     "REACT_APP_PLATFORM_URL",
     "REACT_APP_ORGANIZATION_ID",
-    "REACT_APP_API_KEY",
+    "REACT_APP_COMMERCE_ENGINE_API_KEY",
     "REACT_APP_USER_EMAIL",
     "REACT_APP_SERVER_PORT",
   ];

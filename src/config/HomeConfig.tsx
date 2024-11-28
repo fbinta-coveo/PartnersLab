@@ -1,7 +1,6 @@
-import HeroImage from "../assets/QMULHERO.jpg";
+import HeroImage from "../assets/Hero.svg";
 import CoveoLogo from "../assets/CoveoLogo.svg";
-import QmulLogo from "../assets/QmulLogo.jpg";
-import RecommendationDefault from "../assets/RECOMMENDATIONSQMUL.png";
+import RecommendationDefault from "../assets/Recommendation.jpg";
 import { RecommendationType } from "./Types/ConfigTypes";
 
 /* To import your Demo Logo
@@ -15,41 +14,45 @@ import { RecommendationType } from "./Types/ConfigTypes";
 3. Replace the CoveoLogo with DemoLogo below.
 */
 
-export const HeaderLogo = QmulLogo;
+export const HeaderLogo = CoveoLogo;
 
-export const FooterLogo = QmulLogo;
+export const FooterLogo = CoveoLogo;
 
 export const DefaultRecommendationImage = RecommendationDefault;
 
 // TODO When generating JSON, dynamically generate internationalization config in admin console to include these elements.
 export const HeaderConfig = [
   {
-    title: "STUDY",
+    title: "Service Support",
     redirectTo: "/home",
   },
   {
-    title: "ABOUT",
+    title: "Ecommerce",
     redirectTo: "/",
   },
   {
-    title: "RESEARCH",
+    title: "Workplace",
     redirectTo: "/",
   },
   {
-    title: 'FIND AN EXPERT',
+    title: "Site Search",
     redirectTo: "/",
   },
   {
-    title: 'DOCS',
+    title: 'AI Labs',
+    redirectTo: "/",
+  },
+  {
+    title: 'Docs',
     redirectTo: "/docs",
   }
 ];
 
 export const HeroConfig = {
-  title: "Explore our campuses",
-  description: "At Queen Mary, you get the safety and security of campus life, while living in one of the most exciting parts of London.",
+  title: "The only AI platform specifically built to make every digital experience delightful, relevant, and profitable",
+  description: "Advanced search. Relevant recommendations. Unrivaled personalization",
   background: HeroImage,
-  buttonText: "JOIN QUEEN MARY",
+  buttonText: "Explore",
   onClickButtonRedirect: "/search",
   width : "100%",
   height: "700px",
@@ -65,28 +68,40 @@ export const HeroConfig = {
 
 };
 
-export const MainRecommendationConfig: RecommendationType = {
-  title: "Recommendations",
-  description: "Here are your personalized recommendations",
-  numberOfResults: 8,
-  imageField: "blogimage",
-  pipeline: "default",
-  searchHub: "default",
-  id: "Recommendation",
-  active : true,      // changing to "false" will hide this recommendation
-  type: "normal"       // changing to "carousel" will show the recommendations in a courosel. It can only be "normal" or "carousel"
-};
-
-export const VideoRecommendationConfig: RecommendationType = {
-  title: "Videos",
-  description: "Here are your personalized recommendations",
-  numberOfResults: 8,
-  imageField: "ytthumbnailurl",
-  pipeline: "Video Rec Sidebar",
-  searchHub: "default",
-  id: "Recommendation",
-  active : true ,     // changing to "false" will hide this recommendation
-  type: "normal"     // changing to "carousel" will show the recommendations in a courosel. It can only be "normal" or "carousel"
-};
+export const HomeRecommendationConfig: RecommendationType[] = [
+  {
+    title: "Recommendations",
+    description: "Here are your personalized recommendations",
+    numberOfResults: 15,
+    imageField: "ec_images",
+    pipeline: "Sports",
+    searchHub: "default",
+    id: "Recommendation",
+    active : true,       // changing to "false" will hide this recommendation
+    type: "slider" // "list" | "carousel" | "slider"
+  },
+  {
+    title: "Recommendations",
+    description: "Here are your personalized recommendations",
+    numberOfResults: 15,
+    imageField: "ec_images",
+    pipeline: "Sports",
+    searchHub: "default",
+    id: "Recommendation",
+    active : true,       // changing to "false" will hide this recommendation
+    type: "carousel" // "list" | "carousel" | "slider"
+  },
+  {
+    title: "Recommendations",
+    description: "Here are your personalized recommendations",
+    numberOfResults: 8,
+    imageField: "ec_images",
+    pipeline: "Sports",
+    searchHub: "default",
+    id: "Recommendation",
+    active : true,       // changing to "false" will hide this recommendation
+    type: "list" // "list" | "carousel" | "slider"
+  },
+]
 
 export const EnableAuthentication = false;

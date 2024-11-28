@@ -1,41 +1,41 @@
-import React, { useState, useEffect, useContext, FunctionComponent } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState, FunctionComponent, useContext } from "react";
 import {
   RecommendationList as HeadlessRecommendationList,
   loadClickAnalyticsActions,
   Result,
-  buildRecommendationEngine,
-  buildRecommendationList,
-  getOrganizationEndpoints,
-} from '@coveo/headless/recommendation';
-import { Theme } from '../../config/theme';
-import RecommendtionCard, { SkeletonRecommendtionCard } from './RecommendationCard';
-import { CustomContextContext } from '../CustomContext/CustomContextContext';
-import { DefaultRecommendationImage, MainRecommendationConfig } from '../../config/HomeConfig';
-import EngineContext from '../../common/engineContext';
-import { getSearchToken } from '../../common/Engine';
-import { useNavigate } from 'react-router-dom';
-import { MainRecommendationConfigTranslations } from '../../config/InternationalizationConfig';
-import { LanguageContext } from '../Internationalization/LanguageUtils';
+} from "@coveo/headless/recommendation";
+import { Theme } from "../../config/theme";
+import styled from "styled-components";
+import RecommendtionCard, {
+  SkeletonRecommendtionCard,
+} from "./RecommendationCard";
+import { DefaultRecommendationImage } from "../../config/HomeConfig";
+import { LanguageContext } from "../Internationalization/LanguageUtils";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { RecommendationType } from "../../config/Types/ConfigTypes";
 
-interface RecommendationListProps {
+interface RecommendationCarouselProps {
   controller: HeadlessRecommendationList;
   engine: any;
+  config: RecommendationType;
 }
 
-export const RecommendationListRenderer: FunctionComponent<RecommendationListProps> = (props) => {
-  const engine = props.engine;
-  const { controller } = props;
+const RecommendationCarousel =({config, controller, engine}: RecommendationCarouselProps) => {
+
   const { getText } = useContext(LanguageContext);
   const [state, setState] = useState(controller.state);
   const [currentIndex, setCurrentIndex] = useState(0); // for carousel
+
 
   useEffect(() => {
     controller.refresh();
     controller.subscribe(() => setState(controller.state));
   }, []);
+
+  if(!config.active){
+    return;
+  }
 
   if (state.error) {
     return (
@@ -86,40 +86,35 @@ export const RecommendationListRenderer: FunctionComponent<RecommendationListPro
   };
 
   const skeletonArray = [1, 2, 3, 4, 5];
-  const type = MainRecommendationConfig.type;
-  const numberOfResults = MainRecommendationConfig.numberOfResults;
+
 
   return (
     <MainWrapper>
-      <Title>
-        {MainRecommendationConfig.title && getText(MainRecommendationConfig.title, MainRecommendationConfigTranslations, 'title')}
-      </Title>
-      <SubTitle>
-        {MainRecommendationConfig.description && getText(MainRecommendationConfig.description, MainRecommendationConfigTranslations, 'description')}
-      </SubTitle>
-      {type === 'carousel' ? (
-        <>
-          <SliderContainer>
+      <Title>{config.title && getText(config.title, config, "title")}</Title>
+      <SubTitle>{config.description && getText(config.description, config, "description")}</SubTitle>
+     <SliderContainer>
             <ArrowButton onClick={prevSlide}>
               <ArrowBackIcon />
             </ArrowButton>
-            <CardWrapper>
+            <CarouselCardWrapper>
               {state.recommendations.length > 0 ? (
                 getVisibleRecommendations().map((recommendation, index) => {
-                  const imageURL: string = recommendation.raw[`${MainRecommendationConfig.imageField}`] as string;
+                  const temp: unknown = recommendation.raw[`${config.imageField}`];
+                  const imageURL: string = temp as string;
                   const isFocused = index === 2; // the middle one is always focused
                   return (
                     <Slide key={recommendation.title + recommendation.uniqueId} isFocused={isFocused}>
                       <RecommendtionCard
-                        video={false}
-                        title={recommendation.title}
-                        description={recommendation.excerpt}
-                        image={imageURL ? imageURL : DefaultRecommendationImage}
-                        clickUri={recommendation.clickUri}
-                        onClick={() => logClick(recommendation)}
-                        onContextMenu={() => logClick(recommendation)}
-                        onMouseDown={() => logClick(recommendation)}
-                        onMouseUp={() => logClick(recommendation)}
+                            video={false}
+                            title={recommendation.raw.ec_name ? recommendation.raw.ec_name as string : ""}
+                            description={recommendation.raw.ec_description ? recommendation.raw.ec_description as string : ""}
+                            image={imageURL ? imageURL : DefaultRecommendationImage}
+                            clickUri={recommendation.clickUri}
+                            recommendation={recommendation}
+                            onClick={() => logClick(recommendation)}
+                            onContextMenu={() => logClick(recommendation)}
+                            onMouseDown={() => logClick(recommendation)}
+                            onMouseUp={() => logClick(recommendation)}
                       />
                     </Slide>
                   );
@@ -131,92 +126,29 @@ export const RecommendationListRenderer: FunctionComponent<RecommendationListPro
                   </Slide>
                 ))
               )}
-            </CardWrapper>
+            </CarouselCardWrapper>
             <ArrowButton onClick={nextSlide}>
               <ArrowForwardIcon />
             </ArrowButton>
-          </SliderContainer>
+        </SliderContainer>
           <DotsContainer>
             {state.recommendations.map((_, index) => (
               <Dot key={index} onClick={() => goToSlide(index)} isActive={index === currentIndex} />
             ))}
           </DotsContainer>
-        </>
-      ) : (
-        <NormalCardWrapper>
-          {state.recommendations.length > 0 ? (
-            state.recommendations.slice(0, numberOfResults).map((recommendation) => {
-              const temp: unknown = recommendation.raw[`MainRecommendationConfig.imageField`];
-              const imageURL: string = temp as string;
-              return (
-                <div key={recommendation.title + recommendation.uniqueId}>
-                  <RecommendtionCard
-                    video={false}
-                    title={recommendation.title}
-                    description={recommendation.excerpt}
-                    image={imageURL ? imageURL : DefaultRecommendationImage}
-                    clickUri={recommendation.clickUri}
-                    onClick={() => logClick(recommendation)}
-                    onContextMenu={() => logClick(recommendation)}
-                    onMouseDown={() => logClick(recommendation)}
-                    onMouseUp={() => logClick(recommendation)}
-                  />
-                </div>
-              );
-            })
-          ) : (
-            skeletonArray.map((item) => (
-              <div key={item}>
-                <SkeletonRecommendtionCard />
-              </div>
-            ))
-          )}
-        </NormalCardWrapper>
-      )}
     </MainWrapper>
   );
 };
 
-const MainRecommendationList = () => {
-  const Engine = useContext(EngineContext)!;
-  const [token, setToken] = useState('');
-  const { settingContextFromEngine } = useContext(CustomContextContext);
 
-  useEffect(() => {
-    (async () => {
-      setToken(await getSearchToken());
-    })();
-  }, []);
-
-  if (!token) return null;
-
-  const recommendationEngine = buildRecommendationEngine({
-    configuration: {
-      organizationId: process.env.REACT_APP_ORGANIZATION_ID!,
-      accessToken: token,
-      searchHub: MainRecommendationConfig.searchHub,
-      pipeline: MainRecommendationConfig.pipeline,
-      organizationEndpoints: getOrganizationEndpoints(process.env.REACT_APP_ORGANIZATION_ID!),
-    },
-  });
-
-  settingContextFromEngine(recommendationEngine);
-
-  const recController = buildRecommendationList(recommendationEngine, {
-    options: { id: MainRecommendationConfig.id },
-  });
-
-  return <RecommendationListRenderer controller={recController} engine={recommendationEngine} />;
-};
-
-export default MainRecommendationList;
+export default RecommendationCarousel;
 
 const MainWrapper = styled.div`
   width: 95%;
-  max-width: 1800px;
+  max-width : 1800px;
   background-color: white;
   border-radius: 24px;
-  text-align: center;
+  text-align : center;
   position: relative;
   top: -40px;
   padding: 40px 20px;
@@ -229,11 +161,9 @@ const MainWrapper = styled.div`
 
 const Title = styled.h2`
   font-size: 32px;
-  font-weight: 400;
+  font-weight: 500;
   font-family: inherit;
   color: ${Theme.primaryText};
-  margin-top: 30px;
-  margin-bottom: 10px;
 `;
 
 const SubTitle = styled.p`
@@ -244,11 +174,14 @@ const SubTitle = styled.p`
   margin-bottom: 20px;
 `;
 
+
 const SliderContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
   width: 100%;
+  max-width: 1500px;
+ 
 `;
 
 const ArrowButton = styled.button`
@@ -267,31 +200,24 @@ const ArrowButton = styled.button`
   transition: background-color 0.3s ease-in-out;
 
   &:hover {
-    background-color: ${Theme.primary};
+    background-color: ${Theme.button};
   }
 `;
 
-const NormalCardWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  max-width: 1500px;
-  margin-top: 20px;
-`;
-
-const CardWrapper = styled.div`
+const CarouselCardWrapper = styled.div`
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  width: 80%;
+  width: 90%;
   height: 700px;
   justify-content: center;
   align-items: center;
   position: relative;
   margin: 0px auto;
+  
 `;
+
+
 
 type SlideProps = {
   isFocused: boolean;
@@ -301,9 +227,9 @@ const Slide = styled.div<SlideProps>`
   flex: 0 0 ${({ isFocused }) => (isFocused ? '3%' : '20%')};
   transition: all 0.5s ease-in-out;
   opacity: ${({ isFocused }) => (isFocused ? 1 : 0.6)};
-  transform: translateX(${({ isFocused }) => (isFocused ? '0' : '0')}) scale(${({ isFocused }) => (isFocused ? 1.2 : 1)});
+  transform: translateX(${({ isFocused }) => (isFocused ? '0' : '0')}) scale(${({ isFocused }) => (isFocused ? 1.25 : 1)});
   transition: transform 0.5s ease-in-out, flex 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  margin: ${({ isFocused }) => (isFocused ? '0 25px' : '0 0')};
+  margin: ${({ isFocused }) => (isFocused ? '0 47px' : '10px')};
   border-radius: 16px;
 
   img {
@@ -335,3 +261,4 @@ const Dot = styled.div<DotProps>`
     background-color: ${Theme.primary};
   }
 `;
+

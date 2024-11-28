@@ -1,9 +1,8 @@
 import React from "react";
 import HeroHome from "./HeroHome";
 import styled from "styled-components";
-import MainRecommendations from "../Recommendations/MainRecommendations";
-import VideoRecommendations from "../Recommendations/VideoRecommendations";
-import { MainRecommendationConfig, VideoRecommendationConfig } from "../../config/HomeConfig";
+import { HomeRecommendationConfig } from "../../config/HomeConfig";
+import HomeRecommendations from "../Recommendations/HomeRecommendations";
 
 const HomePage: React.FC = () => {
 
@@ -11,9 +10,11 @@ const HomePage: React.FC = () => {
     <>
       <HeroHome />
       <MainWrapper>
-        {Object.keys(MainRecommendationConfig).length !== 0 && MainRecommendationConfig.active &&  <MainRecommendations />}
-        {Object.keys(VideoRecommendationConfig).length !== 0 && VideoRecommendationConfig.active && <VideoRecommendations />}
-  
+        {
+          HomeRecommendationConfig.map((config) => {
+              return <HomeRecommendations RecommendationConfig={config} />
+            }
+          )}
       </MainWrapper>
     </>
   );

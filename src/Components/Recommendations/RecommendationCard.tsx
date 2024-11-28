@@ -14,6 +14,7 @@ interface RecommendationCardType {
   image: string;
   video?: boolean;
   clickUri: string;
+  recommendation?: any;
   onClick: () => void;
   onContextMenu: () => void;
   onMouseDown: () => void;
@@ -27,6 +28,7 @@ const RecommendtionCard: React.FC<RecommendationCardType> = ({
   image,
   video = true,
   clickUri,
+  recommendation,
   onClick,
   onContextMenu,
   onMouseDown,
@@ -35,6 +37,14 @@ const RecommendtionCard: React.FC<RecommendationCardType> = ({
 }) => {
   const { getText } = useContext(LanguageContext);
   const label =video ? getText("Watch now", SearchConfigTranslations, "watchNow"):getText("Learn more", SearchConfigTranslations, "learnMore")
+
+  const formatPrice = (price) => {
+    return price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  };
+
+  if(recommendation){
+    console.log(recommendation);
+  }
 
   return (
     <MainWrapper
@@ -53,7 +63,10 @@ const RecommendtionCard: React.FC<RecommendationCardType> = ({
       </ImageContainer>
       }
       <TextWrapper>
-        <Title>{title}</Title>
+        <div style={{ textAlign: "left" }}>
+          <Title>{title}</Title>
+          <p>{"$ " + recommendation.raw.ec_price}</p>
+        </div>
         <SubTitle>{description}</SubTitle>
         <ReferralLink>
           {label}
@@ -94,10 +107,14 @@ const Image = styled.img`
 const TextWrapper = styled.div`
   display: flex;
   width: fit-content;
-  align-items: center;
+  align-items: start;
   padding: 10px 10px;
   flex-direction: column;
+  gap: 5px;
+  flex-grow: 1; // Allow TextWrapper to grow and fill available space
+  justify-content: space-between;
 `;
+
 
 const Title = styled.a`
   font-family: inherit;
@@ -105,13 +122,7 @@ const Title = styled.a`
   font-weight: 500;
   font-size: 20px;
   color: ${Theme.primaryText};
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: 3;
-  line-clamp: 3; 
-  -webkit-box-orient: vertical;;
-  text-align:center;
-  height: 95px;
+  text-align: left;
 `;
 
 const SubTitle = styled.span`
@@ -119,9 +130,7 @@ const SubTitle = styled.span`
   font-style: normal;
   font-weight: 300;
   font-size: 16px;
-  height: 78px;
-  line-height: 26px;
-  color: ${Theme.primaryText};
+  color: gray;
   display: -webkit-box;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,9 +138,8 @@ const SubTitle = styled.span`
   line-clamp: 3; 
   -webkit-box-orient: vertical;
   width: 280px;
-  text-align:center;
+  text-align: left;
   margin-bottom: 10px;
-  height: 80px;
 `;
 
 const ReferralLink = styled.a`
@@ -148,15 +156,17 @@ const ReferralLink = styled.a`
 `;
 
 const MainWrapper = styled.div`
-  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1; // Allow flex children to grow and shrink
   width: 300px;
   border-radius: 16px;
   border: 1px solid #e5e8e8;
- 
-  margin: 20px;
   background: white;
   cursor: pointer;
-  
+  height: 100%; // Ensure the card takes up the full height
+
   &:hover ${Title} {
     color: ${Theme.primary};
   }
@@ -168,6 +178,7 @@ const MainWrapper = styled.div`
   &:hover ${ReferralLink} {
     opacity: 1;
   }
+
   @media (max-width: 480px) {
     width: 90vw;
   }

@@ -7,7 +7,7 @@ import { Theme } from "../../config/theme";
 const Footer: React.FC = () => {
   return (
     <Wrapper>
-      <Logo src={FooterLogo} />
+     {/*  <Logo src={FooterLogo} />
       <SecurityPrivacy>
         <Title>Security and Privacy</Title>
         <LogosContainer href="https://www.coveo.com/en/platform/security" target="_blank" rel="noreferrer">
@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
           <img src="https://cdn.coveo.com/image/authenticated/s--M9hz0uHO--/d_placeholder-svg.svg/f_svg/v1/web/web01/en/library/icons/certifications/27001" width={"120px"} alt="" />
           <img src="https://cdn.coveo.com/image/authenticated/s--mOZH4Ee2--/d_placeholder-svg.svg/f_svg/v1/web/web01/en/library/icons/certifications/27018" width={"120px"} alt="" />
         </LogosContainer>
-      </SecurityPrivacy>
+      </SecurityPrivacy> */}
     </Wrapper>
   );
 };

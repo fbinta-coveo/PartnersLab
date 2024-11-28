@@ -5,58 +5,50 @@ import {
   StandaloneSearchBoxOptions,
   buildSearchBox,
   loadSearchActions,
-  loadSearchAnalyticsActions,
+/*   loadSearchAnalyticsActions, */
   loadQueryActions,
-  buildResultList,
-  ResultList,
-} from "@coveo/headless";
-import EngineContext from "../../common/engineContext";
+  buildSearch,
+  Search as CommerceSearch,
+  buildInstantProducts
+} from "@coveo/headless/commerce";
+import EngineContext, { CommerceEngineContext } from "../../common/engineContext";
 import { useNavigate } from "react-router-dom";
 import parse from "autosuggest-highlight/parse";
 import match from "autosuggest-highlight/match";
 import styled from "styled-components";
 import { ClickAwayListener, IconButton } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import { Theme } from "../../config/theme";
 import Button from '@mui/material/Button';
 import { Icon } from "react-icons-kit";
 import { search } from "react-icons-kit/feather/search";
-import { FieldToIncludesInSearchResults, ResultsImageField } from "../../config/SearchConfig";
-
-import { SearchPageTabConfig} from "../../config/SearchConfig";
-import { SpeechRecognitionButton } from "../SearchPage/SpeechRecognitionButton";
-import {ImageRecognitionButton} from "../SearchPage/ImageRecognition";
-import CloseIcon from '@mui/icons-material/Close';
 import {LanguageContext} from "../Internationalization/LanguageUtils";
-import {SearchConfigTranslations} from "../../config/InternationalizationConfig";
+import { HomeProductsSearchBoxTranslations } from "../../config/InternationalizationConfig";
 import { HeaderLogo } from "../../config/HomeConfig";
+import { SpeechRecognitionButton } from "../SearchPage/SpeechRecognitionButton";
+import CloseIcon from '@mui/icons-material/Close';
+import SearchIcon from "@mui/icons-material/Search";
+import { STANDALONE_SEARCHBOX_KEY } from "./HomeSearchBox";
 
-const firstTab = SearchPageTabConfig[0].caption;
+const defaultSearchPageRedirect = ()=> window.open(`/search`, '_self')
 
 
-const defaultSearchPageRedirect = ()=> window.open(`/search/${firstTab.replace(/\s/g, "")}#tab=${encodeURI(firstTab)}`,"_self")
 
-const withQuerySearchPageRedirect = ()=>window.open(`/search/${firstTab.replace(/\s/g, "")}/${window.location.hash}&tab=${encodeURI(firstTab)}`,"_self")
-
-
-interface HomeResultsSearchBoxProps {
+interface HomeProductsSearchBoxProps {
   searchBoxController: HeadlessSearchBox;
   toggleSearchBox: () => void;
-  ResultListController : ResultList
+  resultsController : any
 }
 
-const HomeResultsSearchBoxRenderer: FunctionComponent<
-  HomeResultsSearchBoxProps
+const HomeProductsSearchBoxRenderer: FunctionComponent<
+    HomeProductsSearchBoxProps
 > = (props) => {
-  const { searchBoxController,ResultListController } = props;
-  const engine = useContext(EngineContext)!;
+  const { searchBoxController,resultsController } = props;
+  const engine = useContext(CommerceEngineContext)!;
   const [state, setState] = useState(searchBoxController.state);
-  const [resultState, setResultState] = useState(ResultListController.state)
   const [searchTerm, setSearchTerm] = useState("");
   const [openPopper, setOpenPopper] = useState(false);
   const { getText } = useContext(LanguageContext);
-
-  let navigate = useNavigate();
+  const [resultsState, setResultsState] = useState(resultsController.state);
 
   useEffect(
     () =>
@@ -66,36 +58,29 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
 
   useEffect(
     () =>
-    ResultListController.subscribe(() => setResultState(ResultListController.state)),
-    [ResultListController]
+      resultsController.subscribe(() => setResultsState(resultsController.state)),
+    [resultsController]
   );
+
+
+
 
 
   useEffect(() => {
     const unsub = setTimeout(async () => {
-      const queryAction = loadQueryActions(engine);
-      await engine.dispatch(
-        queryAction.updateQuery({
-          q: searchTerm,
-          enableQuerySyntax: true,
-        })
-      );
 
-      const analyticsAction = loadSearchAnalyticsActions(engine);
-      const searchAction = loadSearchActions(engine);
-      const searchSubmitAction = searchAction.executeSearch(
-        analyticsAction.logSearchboxSubmit()
-      );
-      await engine.dispatch(searchSubmitAction);
+      resultsController.updateQuery(searchTerm);
 
-      /* searchBoxController.submit() */
-    }, 500);
+      localStorage.setItem(STANDALONE_SEARCHBOX_KEY, JSON.stringify({value: searchTerm}));
+    
+      searchBoxController.submit();
+
+    }, 0);
 
     return () => clearTimeout(unsub);
   }, [searchTerm]);
 
   const onPressSearchButton = ()=>{
-   /*  navigate('/search'); */
     props.toggleSearchBox();
     searchBoxController.submit();
 
@@ -104,11 +89,12 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
       return;
     }
 
-    withQuerySearchPageRedirect()
-}
+    defaultSearchPageRedirect()
+  }
+
 
   return (
-    <Container>
+<Container>
     <MainWrapper>
       <ClickAwayListener onClickAway={() => setOpenPopper(false)}>
         <>
@@ -118,6 +104,7 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
             onChange={(event) => {
               const newInputValue = event.target.value;
               searchBoxController.updateText(newInputValue);
+              resultsController.updateQuery(newInputValue);
               setSearchTerm(newInputValue);
             }}
             onFocus={() => {
@@ -136,13 +123,12 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                       </ClearButton>
                     )
                   }
-                  <SpeechRecognitionButton controller={searchBoxController} callback={withQuerySearchPageRedirect}></SpeechRecognitionButton>
-                  <ImageRecognitionButton controller={searchBoxController} callback={withQuerySearchPageRedirect}></ImageRecognitionButton>
+                  <SpeechRecognitionButton controller={searchBoxController} callback={defaultSearchPageRedirect}></SpeechRecognitionButton>
                 </EndButtons>
               ),
             }}
             className="home-search-box"
-            placeholder={getText("Search", SearchConfigTranslations, "searchPlaceholder")}
+            placeholder={getText("Search", HomeProductsSearchBoxTranslations, "searchPlaceholder")}
             size="small"
             onKeyDown={(e) => {
               if (
@@ -152,7 +138,7 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                 props.toggleSearchBox();
                 searchBoxController.submit();
                 /* navigate("/search"); */
-                withQuerySearchPageRedirect()
+                defaultSearchPageRedirect()
               }
             }}
           />
@@ -164,7 +150,7 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
           >
             <PopperMainWrapper>
               <PopperQSContainer>
-                <PopperTitle>{getText("Suggested Searches", SearchConfigTranslations, "suggestedSearches")} </PopperTitle>
+                <PopperTitle>{getText("Suggested Searches", HomeProductsSearchBoxTranslations, "suggestedSearches")} </PopperTitle>
                 { state.suggestions.length > 0 ? (
                     <>
                     {state.suggestions.map((suggestion) => {
@@ -178,7 +164,7 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                             setSearchTerm(suggestion.rawValue);
                             props.toggleSearchBox();
                             searchBoxController.submit();
-                            withQuerySearchPageRedirect()
+                            defaultSearchPageRedirect()
                             /* navigate("/search"); */
                           }}
                         >
@@ -200,20 +186,20 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                     })}
                     </>
                   ) : (
-                    <p>No results found</p>
+                    null
                   )}
               </PopperQSContainer>
-              <PopperResultsContainer>
-                <PopperTitle>{getText("Featured Results", SearchConfigTranslations, "featuredResults")}</PopperTitle>
+              { resultsState.products.length > 0 && <PopperResultsContainer>
+                <PopperTitle>{getText("Featured Results", HomeProductsSearchBoxTranslations, "featuredResults")}</PopperTitle>
 
                 <ResultContainer>
-                { resultState.results.length > 0 ? 
+                { resultsState.products.length > 0 ? 
                       <>
-                          {resultState.results.slice(0, 6).map((result) => {
-                          let src: any = result.raw[ResultsImageField] || result.raw['ytthumbnailurl'];
+                          {resultsState.products.slice(0, 6).map((result) => {
+                          let src: any = result.ec_images[0];
                           return (
                             <PopperResultItem
-                              key = {result.uniqueId}
+                              key = {result.permanentid}
                               onMouseDown={() => {
                                 window.open(result.clickUri, "_blank");
                               }}
@@ -221,7 +207,7 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                               <PopperResultImage
                                   src={src ? src : HeaderLogo}
                                   style={src ? {} : {background: "#e9e9e9", objectFit: "contain", padding: "20px"}}
-                                  alt={result.title}
+                                  alt={result.ec_name}
                                />
                               <PopperResultTitle
                                 href={result.clickUri}
@@ -229,10 +215,10 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                                   window.open(result.clickUri, "_blank");
                                 }}
                               >
-                                {result.title}
+                                {result.ec_name}
                               </PopperResultTitle>
                               <PopperResultDescription>
-                                {result.excerpt}
+                                {result.ec_description}
                               </PopperResultDescription>
                             </PopperResultItem>
                           );
@@ -250,10 +236,10 @@ const HomeResultsSearchBoxRenderer: FunctionComponent<
                     searchBoxController.submit();
                     defaultSearchPageRedirect()
                     window.open('/search' + window.location.hash,"_self");
-                  }}>{getText("More Results", SearchConfigTranslations, "moreResults")}
+                  }}>{getText("More Results", HomeProductsSearchBoxTranslations, "moreResults")}
                   </PopperSeeMore>
                 </CenteredDiv>
-              </PopperResultsContainer>
+              </PopperResultsContainer>}
             
             </PopperMainWrapper>
           </PopperStyledComponent>
@@ -270,29 +256,52 @@ interface SearchBoxType {
   toggleSearchBox: () => void;
 }
 
-const HomeResultsSearchBox = ({ toggleSearchBox }: SearchBoxType) => {
+const HomeProductsSearchBox = ({ toggleSearchBox }: SearchBoxType) => {
 
   const options: StandaloneSearchBoxOptions = {
     numberOfSuggestions: 8,
     redirectionUrl: "/search",
   };
-  const engine = useContext(EngineContext)!;
-  const searchBoxController = buildSearchBox(engine, { options });
-  const ResultListController = buildResultList(engine, {
-    options: { fieldsToInclude: FieldToIncludesInSearchResults },
-  });
-  searchBoxController.updateText('');
 
-  return (
-    <HomeResultsSearchBoxRenderer
-      searchBoxController={searchBoxController}
-      toggleSearchBox={toggleSearchBox}
-      ResultListController = {ResultListController}
-    />
-  );
+
+  const engine = useContext(CommerceEngineContext)!;
+  const [searchBoxController, setSearchBoxController] = useState<HeadlessSearchBox | null>(null);
+  const [resultsController, setResultsController] = useState<any | null>(null);
+
+  useEffect(()=>{
+
+    if(engine){
+      setSearchBoxController(buildSearchBox(engine, { options }));
+      setResultsController(buildInstantProducts(engine,{
+        options :{
+          cacheTimeout : 100
+        }
+      }))
+    }
+  
+  },[engine])
+
+
+  if(searchBoxController && resultsController){
+    searchBoxController.updateText('');
+    resultsController.updateQuery('');
+
+    return (
+      <HomeProductsSearchBoxRenderer
+        searchBoxController={searchBoxController}
+        toggleSearchBox={toggleSearchBox}
+        resultsController={resultsController}
+      />
+    );
+  }
+  else{
+    return null;
+  
+  }
+
 };
 
-export default HomeResultsSearchBox;
+export default HomeProductsSearchBox;
 
 const MainWrapper = styled.div`
   display: flex;
@@ -343,6 +352,7 @@ const PopperQSListItem = styled.li`
   cursor: pointer;
   transition: all 0.1s ease-in;
   border-radius: 6px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   width: 100%;

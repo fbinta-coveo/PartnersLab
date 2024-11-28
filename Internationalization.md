@@ -46,17 +46,17 @@ There are 3 Base Settings:
             "fr": "Explorer"
         }
     ```
-3. **MainRecommendationConfigTranslations**
+3. **HomeTopRecommendationConfigTranslations**
     - Small configuration for text fields that introduce the personalized recommendation. 
-    - Text is rendered in this file -> [src/Components/Recommendations/MainRecommendations.tsx](./src/Components/Recommendations/MainRecommendations.tsx)
+    - Text is rendered in this file -> [src/Components/Recommendations/HomeTopRecommendations.tsx](./src/Components/Recommendations/HomeTopRecommendations.tsx)
     ```json
         "title": {
             "fr": "Recommandations"
         },
     ```
-4. **VideoRecommendationConfigTranslations**
+4. **HomeBottomRecommendationConfigTranslations**
     - Small configuration for the text fields that introduce the personalized video recommendations.
-    - Text is rendered in this file -> [src/Components/Recommendations/VideoRecommendations.tsx](./src/Components/Recommendations/VideoRecommendations.tsx)
+    - Text is rendered in this file -> [src/Components/Recommendations/HomeBottomRecommendations.tsx](./src/Components/Recommendations/HomeBottomRecommendations.tsx)
     ```json
         "title": {
             "en": "Clips",
