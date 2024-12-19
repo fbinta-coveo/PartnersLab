@@ -1,18 +1,16 @@
 import { buildSearch } from "@coveo/headless/commerce";
 import { useContext, useEffect, useState } from "react";
 import { CommerceEngineContext } from "../../common/engineContext";
-import ResultTemplate, { ResultSkeleton } from "../../config/ResultTemplate";
+import ResultTemplate, { ResultSkeleton } from "../../config/CommerceResultTemplate";
 import { Grid } from "@mui/material";
 import NoResult from "./NoResult";
 
 const ResultsListRenderer = ({ controller }) => {
   const [state, setState] = useState(controller.state);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     controller.subscribe(() => {
       setState(controller.state);
-      setLoading(false);
     });
   }, []);
 
@@ -23,21 +21,23 @@ const ResultsListRenderer = ({ controller }) => {
 
 return (
     <>
-        <Grid container spacing={2} mt={1} maxWidth={1300} style={controller.state.isLoading ? { opacity: 0.2} : {}}>
-            {loading ? (
-                <>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => {
-                        return <ResultSkeleton key={index} />;
-                    })}
-                </>
-            ) : (
-                <>
-                    {state.products.map((product) => {
-                        return <ResultTemplate controller={controller} product={product} key={product.permanentid} />;
-                    })}
-                </>
-            )}
-        </Grid>
+         <Grid container spacing={0} mt={1} maxWidth={1300} sx={{opacity : state.isLoading? "0.5" : "1"}}>
+                {controller.state.isLoading ? (
+                    <>
+                    {state.products.length === 0 ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((index) => {
+                            return <ResultSkeleton key={index} />;
+                        }) : state.products.map((product) => {
+                            return <ResultTemplate controller ={controller} product={product} key={product.permanentid} />;
+                        })}
+                    </>
+                ) : (
+                    <>
+                        {state.products.map((product) => {
+                            return <ResultTemplate controller ={controller} product={product} key={product.permanentid} />;
+                        })}
+                    </>
+                )}
+            </Grid>
     </>
     );
 };

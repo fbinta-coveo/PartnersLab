@@ -20,6 +20,8 @@ import BreadcrumbManager from "../SearchPage/BreadcrumbManager";
 import Summary from "../SearchPage/Summary";
 import SortComponent from "../SearchPage/SortComponent";
 import PaginationManager from "../SearchPage/PaginationManager";
+import CoveoUA from "../../helper/CoveoAnalytics";
+import styled from "styled-components";
 
 const PLP = () => {
   const [engine, setEngine] = useState(null);
@@ -33,7 +35,7 @@ const PLP = () => {
   if (!engine) {
     return <div>Loading...</div>;
   }
-
+  CoveoUA.logPageView();
   return (
     <>
       <Grid
@@ -51,7 +53,8 @@ const PLP = () => {
           <SearchBox />
         </SearchBoxContainer>
       </Grid>
-      <SearchInterfaceContainer>
+
+      <SearchInterfaceContainer style={{ backgroundColor: "#F6F1EB" }}>
         <SearchWrapper>
           <FacetContainer>
             <FacetList engine={engine} productListing={true} />

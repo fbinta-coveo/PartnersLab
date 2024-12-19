@@ -1,6 +1,19 @@
 @import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
 
 @import url("https://p.typekit.net/p.css?s=1&k=bqa0xml&ht=tk&f=24352.24354.43309.43311&a=47530352&app=typekit&e=css"); 
+/* 
+@font-face {
+  font-family: 'Hermes';
+  src:url("./assets/Font/Hermes.woff2") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Orator';
+  src:url("./assets/Font/Orator.woff2") format('woff2');
+  font-weight: normal;
+  font-style: normal;
+} */
 
 @font-face {
   font-family: "canada-type-gibson";
@@ -76,6 +89,7 @@ code {
 */
 html, body {
   height: 100%;
+  background-color: #F6F1EB;
  /*  overflow-x: hidden; */
 }
 /*
@@ -86,6 +100,7 @@ html, body {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  background-color: #F6F1EB;
 }
 /*
   6. Improve media defaults

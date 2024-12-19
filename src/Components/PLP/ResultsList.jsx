@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { initializeCommerceEngine } from "../../common/Engine";
 import { CommerceEngine, buildProductListing } from "@coveo/headless/commerce";
 import { Grid  } from "@mui/material";
-import ResultTemplate, { ResultSkeleton } from "../../config/ResultTemplate";
+import ResultTemplate, { ResultSkeleton } from "../../config/CommerceResultTemplate";
 
 const ResultRenderer = ({ controller }) => {
     const [products, setProducts] = React.useState([]); 

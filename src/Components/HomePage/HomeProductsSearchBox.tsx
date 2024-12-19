@@ -31,12 +31,44 @@ import { STANDALONE_SEARCHBOX_KEY } from "./HomeSearchBox";
 
 const defaultSearchPageRedirect = ()=> window.open(`/search`, '_self')
 
+const StyledTextField = styled(TextField)`
+  & .MuiInputBase-root {
+    /* border-radius: 20px;  */
+    background-color: #f5f5f5; 
+    padding-right: 50px; 
+    border-radius:0;
+  }
+  width: 100%;
+`;
+
+const SearchIconButton = styled(IconButton)`
+  position: absolute;
+  right: 15px;
+  color: #666; /* Icon color */
+`;
 
 
 interface HomeProductsSearchBoxProps {
   searchBoxController: HeadlessSearchBox;
   toggleSearchBox: () => void;
   resultsController : any
+}
+
+function convertToOptimizedColesUrl(originalUrl, width = 640, quality = 90) {
+  // Check if the URL matches the expected Coles image URL pattern
+  const match = originalUrl.match(/https:\/\/shop\.coles\.com\.au\/wcsstore\/Coles-CAS\/images\/(\d)\/(\d)\/(\d)\/(\d+)-zm\.jpg/);
+  
+  if (!match) {
+    return originalUrl;
+  }
+
+  // Extract the product code
+  const productCode = match[4];
+
+  // Construct the optimized URL
+  const optimizedUrl = `https://www.coles.com.au/_next/image?url=https%3A%2F%2Fproductimages.coles.com.au%2Fproductimages%2F${productCode[0]}%2F${productCode}.jpg&w=${width}&q=${quality}`;
+
+  return optimizedUrl;
 }
 
 const HomeProductsSearchBoxRenderer: FunctionComponent<
@@ -98,7 +130,7 @@ const HomeProductsSearchBoxRenderer: FunctionComponent<
     <MainWrapper>
       <ClickAwayListener onClickAway={() => setOpenPopper(false)}>
         <>
-          <TextField
+          <StyledTextField
             autoComplete="off"
             value={searchTerm}
             onChange={(event) => {
@@ -115,16 +147,27 @@ const HomeProductsSearchBoxRenderer: FunctionComponent<
             }}
             InputProps={{
               endAdornment: (
-                <EndButtons>
-                  { 
-                    state.value.length > 0 && (
-                      <ClearButton onClick={() => searchBoxController.updateText("")}>
-                        <CloseIcon/>
-                      </ClearButton>
-                    )
-                  }
-                  <SpeechRecognitionButton controller={searchBoxController} callback={defaultSearchPageRedirect}></SpeechRecognitionButton>
-                </EndButtons>
+                // <EndButtons>
+                //   { 
+                //     state.value.length > 0 && (
+                //       <ClearButton onClick={() => searchBoxController.updateText("")}>
+                //         <CloseIcon/>
+                //       </ClearButton>
+                //     )
+                //   }
+                //   <SpeechRecognitionButton controller={searchBoxController} callback={defaultSearchPageRedirect}></SpeechRecognitionButton>
+                // </EndButtons>
+                <>
+                <IconButton
+                  onClick={() => setSearchTerm("")}
+                  aria-label="clear"
+                >
+                  {/* <CloseIcon /> */}
+                </IconButton>
+                <SearchIconButton type='submit' style={{height : '43px', marginLeft: '10px'}} onClick={onPressSearchButton}>
+                  <SearchIcon />
+                </SearchIconButton>
+              </>
               ),
             }}
             className="home-search-box"
@@ -145,7 +188,7 @@ const HomeProductsSearchBoxRenderer: FunctionComponent<
           <PopperStyledComponent
             hidden={!openPopper}
             style={{
-              width: "120%",
+              width: "700px !important;",
             }}
           >
             <PopperMainWrapper>
@@ -205,7 +248,7 @@ const HomeProductsSearchBoxRenderer: FunctionComponent<
                               }}
                             >
                               <PopperResultImage
-                                  src={src ? src : HeaderLogo}
+                                  src={src ? convertToOptimizedColesUrl(src) : HeaderLogo}
                                   style={src ? {} : {background: "#e9e9e9", objectFit: "contain", padding: "20px"}}
                                   alt={result.ec_name}
                                />
@@ -246,7 +289,7 @@ const HomeProductsSearchBoxRenderer: FunctionComponent<
         </>
       </ClickAwayListener>
     </MainWrapper>
-    <SearchButton type='submit' variant="contained" style={{height : '43px', marginLeft: '10px'}} onClick={onPressSearchButton}><Icon icon={search} size={24} /></SearchButton>
+    {/* <SearchButton type='submit' variant="contained" style={{height : '43px', marginLeft: '10px'}} onClick={onPressSearchButton}><Icon icon={search} size={24} /></SearchButton> */}
 
     </Container>
   );
@@ -317,10 +360,12 @@ const PopperStyledComponent = styled.div`
   border-radius: 6px;
   box-shadow: 0px 7px 13px 2px rgba(0, 0, 0, 0.08);
   position: relative;
+  width: 800px !important;
+
 `;
 
 const PopperMainWrapper = styled.div`
-  width: 100%;
+  width: 800px !important;
   display: flex;
   padding: 20px;
   gap: 50px;

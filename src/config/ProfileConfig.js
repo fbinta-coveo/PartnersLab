@@ -33,61 +33,29 @@ export const ProfileConfig = [
     context: [
       {
         active: true,
-        keyName: "country",
-        keyValue: "US",
+        keyName: "Gender",
+        keyValue: "Men",
         customQRF: false,
         disabled : false, 
         isDictionaryContext: false
-      },
-      {
-        active: true,
-        keyName: "currency",
-        keyValue: "USD",
-        customQRF: false,
-        disabled : false, 
-        isDictionaryContext: false
-      },
-      {
-        active: true,
-        keyName: "role",
-        keyValue: "engineer",
-        customQRF: false,
-        disabled : true, 
-        isDictionaryContext: false
-      },
+      }
     ],
   },
   {
     name: "Emily Davis",
     email: "edavis@coveo.com",
-    language : "fr",
+    language : "en",
     profile:
       "https://cdn.pixabay.com/photo/2023/03/13/11/19/ai-generated-7849618_960_720.jpg",
     context: [
       {
         active: true,
-        keyName: "country",
-        keyValue: "US",
+        keyName: "Gender",
+        keyValue: "Women",
         customQRF: false,
         disabled : false, 
         isDictionaryContext: false
-      },
-      {
-        active: true,
-        keyName: "currency",
-        keyValue: "USD",
-        customQRF: false,
-        disabled : false, 
-        isDictionaryContext: false
-      },
-      {
-        active: true,
-        keyName: "role",
-        keyValue: "solution",
-        customQRF: false,
-        disabled : true, 
-        isDictionaryContext: false
-      },
+      }
     ],
   },
 ];

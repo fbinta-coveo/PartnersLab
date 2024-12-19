@@ -27,11 +27,22 @@ export const InternationalizationDropdown = () => {
 const CustomSelect = styled.select`
     display: flex;
     align-items: center;
-    background-color: white;
-    border: 0;
+    background-color: transparent;
+    border: none;
     margin-left: 25px;
-    font-size: 25px;
-    &:hover{
-        cursor: pointer;
+    font-size: 10px;
+    padding: 8px 0;
+    color: #333;
+    outline: none;
+    appearance: none; 
+    cursor: pointer; 
+
+    &:hover {
+        color: #555;
     }
-`
+
+    option {
+        background-color: transparent; 
+        color: #333; 
+    }
+`;

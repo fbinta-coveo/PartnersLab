@@ -6,8 +6,8 @@ import { search } from "react-icons-kit/feather/search";
 import HomeSearchBox from "./HomeSearchBox";
 import { x } from "react-icons-kit/feather/x";
 import Fade from "@mui/material/Fade";
-import { useNavigate } from "react-router-dom";
-import { HeaderConfig, HeaderLogo, TopHeaderConfig } from "../../config/HomeConfig";
+import {  useNavigate } from "react-router-dom";
+import { HeaderConfig, HeaderLogo } from "../../config/HomeConfig";
 import Popover from "@mui/material/Popover";
 import ContextForm from "../CustomContext/ContextForm";
 import { CustomContextContext } from "../CustomContext/CustomContextContext";
@@ -18,29 +18,34 @@ import HomeProductsSearchBox from "./HomeProductsSearchBox";
 import { InternationalizationDropdown } from "../Internationalization/InternationalizationDropdown";
 import { InternationalizationEnabled, HomeHeaderConfigTranslations } from "../../config/InternationalizationConfig";
 import { LanguageContext } from "../Internationalization/LanguageUtils";
+import { shoppingCart } from "react-icons-kit/feather/shoppingCart"; 
+import { menu } from "react-icons-kit/feather/menu"; 
+import CartIcon from "./CartIcon.js";
+
+
 
 const Header: React.FC = () => {
 
 
 
-  /*   const plpListResponse = await fetch(
-      new URL(
-        `${organizationEndpoints.admin}/rest/organizations/${process.env.REACT_APP_ORGANIZATION_ID}/commerce/v2/configurations/listings?page=0&perPage=100`,
-      ),
-      { method: 'GET', headers: { Authorization: `Bearer ${process.env.PRODUCT_LISTING_API_KEY}` } },
-    );
-  
-    const json = await plpListResponse.json();
-  
-    const urlValidator = /\/browse\/promotions\//;
-    const validItems = json.items.filter((item) => urlValidator.test(item.matching.url));
-  
-    const listings = validItems.map((item) => {
-      const splitUrl = item.matching.url.split('/');
-      const name = splitUrl[splitUrl.length - 1].replace(/-/g, ' ').trim();
-  
-      return { name: name.charAt(0).toUpperCase() + name.slice(1), urls: [item.matching.url] };
-    }); */
+/*   const plpListResponse = await fetch(
+    new URL(
+      `${organizationEndpoints.admin}/rest/organizations/${process.env.REACT_APP_ORGANIZATION_ID}/commerce/v2/configurations/listings?page=0&perPage=100`,
+    ),
+    { method: 'GET', headers: { Authorization: `Bearer ${process.env.PRODUCT_LISTING_API_KEY}` } },
+  );
+
+  const json = await plpListResponse.json();
+
+  const urlValidator = /\/browse\/promotions\//;
+  const validItems = json.items.filter((item) => urlValidator.test(item.matching.url));
+
+  const listings = validItems.map((item) => {
+    const splitUrl = item.matching.url.split('/');
+    const name = splitUrl[splitUrl.length - 1].replace(/-/g, ' ').trim();
+
+    return { name: name.charAt(0).toUpperCase() + name.slice(1), urls: [item.matching.url] };
+  }); */
 
 
 
@@ -50,7 +55,7 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const { getProfile } = useContext(CustomContextContext)
   const { getText } = useContext(LanguageContext)
-  const onSearchPage = window.location.pathname.includes("search") || window.location.pathname.includes("browse") || window.location.pathname.includes("product") || window.location.pathname.includes("plp")
+  const onSearchPage = window.location.pathname.includes("search") || window.location.pathname.includes("browse") || window.location.pathname.includes("product") || window.location.pathname.includes("plp") 
   const toggleSearchBox = () => {
     if (onSearchPage) {
       const input = document.querySelector(".search-box input");
@@ -88,297 +93,140 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <Wrapper>
-         <Discount>
-         <TopRight>
-            <TopLinks>
-              <TopLink href="#">15% Discount on Champagne* with Couponcode: CHEERS15</TopLink>
-            </TopLinks>
-          </TopRight>
-        
-          
-
-        </Discount> 
-        <Navbar>
-          <MainNavBar>
-            <MainNavBarigth>
-            {/* <span className="header-sub-tl">The Closet</span> */}
-              <Logo src={HeaderLogo} onClick={() => navigate("/home")} />
-            </MainNavBarigth>
-            {/* Display search bar on the homepage only */}
-            {!onSearchPage && (
-              <SearchBarContainer>
-                <HomeProductsSearchBox toggleSearchBox={toggleSearchBox} />
-              </SearchBarContainer>
-            )}
-
-            <MainNavBarleft>
-
-              <LinkWrapper>
-                {HeaderConfig.map((item, index) => {
-
-                  if (index === 0) return <BasicMenu />
-
-                  return (
-                    <NavigationLink key={item.title} href={item.redirectTo}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {item.icon && <Icon icon={item.icon} size={24} /> } {/* Render the icon */}
-       
-                     
-                        {item.title && ( 
-                            <> {getText(item.title, HomeHeaderConfigTranslations, item.title)}</>
-                          
-                )}
-                      </span>
-                    </NavigationLink>
-                  );
-                })}
-                <IconsWrapper>
-                  {onSearchPage && (
-
-                    <IconContainer
-                      style={{ cursor: "pointer" }}
-                      onClick={() => toggleSearchBox()}
-                    >
-                      {openSearch && !onSearchPage ? (
-                        <div style={{ color: Theme.searchIcon }}><Icon icon={x} size={24} /></div>
-                      ) : (
-                        <div style={{ color: Theme.searchIcon }}><Icon icon={search} size={24} /></div>
-                      )}
-                    </IconContainer>
-
-                  )}
-
-                  <ProfileIconContainer
-                    style={{ color: 'black', cursor: "pointer" }}
-                    aria-describedby={id}
-                    onClick={(event) => handleClick(event)}
-                  >
-                    <ProfileAvatar src={getProfile().profile} alt={'profile pic'} />
-                    <ProfileName>{getProfile().name.split(' ').slice(0, -1).join(' ')}</ProfileName>
-                  </ProfileIconContainer>
-                  <Popover
-                    id={id}
-                    open={open}
-                    anchorEl={anchorEl}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                  >
-                    <ContextForm />
-                  </Popover>
-                  {InternationalizationEnabled && <InternationalizationDropdown />}
-                </IconsWrapper>
-              </LinkWrapper>
-              {/* </RightWrapper> */}
-            </MainNavBarleft>
-
-
-          </MainNavBar>
-
-          <TopLeft>
-
-            {TopHeaderConfig.map((item) => {
+      <TopWrapper>
+        <RightWrapper>
+          {InternationalizationEnabled && <InternationalizationDropdown/>}
+          <ListingWrapper>
+            {HeaderConfig.map((item, index) => {
+                // if(index === 0) return <BasicMenu/>
               return (
-                <TopNavigationLink key={item.title} href={item.redirectTo}>
-                  {
-                    // @ts-ignore
-                    getText(item.title, "title")
-                  }
-                </TopNavigationLink>
-
+                <NavigationLink key={item.title} href={item.redirectTo}>
+                  {item.title && getText(item.title, HomeHeaderConfigTranslations, item.title)}
+                </NavigationLink>
               );
-
             })}
+          </ListingWrapper>
+        </RightWrapper>
+      </TopWrapper>
 
-          </TopLeft>
+      <BtmWrapper>
+        <Logo src={HeaderLogo} onClick={() => navigate("/home")} />
+        <LeftWrapper>
+          <IconsWrapper>
+            <MenuContainer style={{ cursor: "pointer" }}>
+                <div style={{ color: Theme.searchIcon }}>
+                  <Icon icon={menu} size={24} />
+                </div>
+                {/* <MenuText>Menu</MenuText> */}
+                <BasicMenu/>
 
+            </MenuContainer>
+          </IconsWrapper>
 
-        </Navbar>
-      </Wrapper>
-      <Fade in={openSearch && !onSearchPage}>
-        <SearchContainer>
+        </LeftWrapper>
+
+        <RightWrapper>
+          <IconsWrapper>
+            <ProfileIconContainer
+              style={{ color: 'black', cursor: "pointer" }}
+              aria-describedby={id}
+              onClick={(event)=>handleClick(event)}
+            >
+              <ProfileAvatar src = {getProfile().profile} alt = {'profile pic'}/>
+              <ProfileName>{getProfile().name.split(' ').slice(0, -1).join(' ')}</ProfileName>
+            </ProfileIconContainer>
+            {/* <CartIcon/> */}
+
+            <CartWrapper onClick={() => navigate("/cart")}>
+            <Icon icon={shoppingCart} size={24} />
+            <CartText>Cart</CartText>
+          </CartWrapper>
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <ContextForm/>
+              </Popover>
+          </IconsWrapper>
+        </RightWrapper>
+      </BtmWrapper>
+
+      
           <SearchBoxContainer>
             {!onSearchPage && 
              <HomeProductsSearchBox toggleSearchBox={toggleSearchBox} /> 
             }
           </SearchBoxContainer>
-        </SearchContainer>
-      </Fade>
+
+
     </>
   );
 };
 
-const Discount = styled.div`
-  background-color: #F3EDDF;//F7FFDC other color 
-  
-  padding: 10px 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  width:100%
-  
-`;
-
-const TopRight = styled.div`
-  
-`;
-
-const TopLinks = styled.ul`
-  display: flex;
-  gap: 15px;
-  list-style: none;
-`;
-
-const TopLink = styled.a`
-  text-decoration:none;
-  color:black;
-  font-size: 16px;
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-const TopLeft = styled.div`
-  display:flex;
-  justify-content:center;
-  padding:10px;
-  width: 100%;
-`;
-
-const TopLinkWrapper = styled.ul`
-  display: flex;
-  flex-direction:row;
-  justify-content:center;
-  white-space: nowrap; /* Prevents links from wrapping to a new line */
-  gap:15px;
-  align-items: center;
-  width: 850px;
-  @media (max-width: 1000px) {
-    width: auto;
-  }
-`;
-
-const TopNavigationLink = styled.a`
-  color: ${Theme.primaryText};
-  padding:0 10px;
-  font-size: 18px;
-  font-weight:500;
-  text-decoration:none;
-  opacity: 1;
-  transition: 0.2s ease-in-out all;
-  &:hover {
-    opacity: 0.7;
-  }
-  @media (max-width: 1000px) {
-    display: none;
-  }
-`;
-
-const Navbar = styled.div`
-display:flex;
-flex-direction:column;
-  width: 70%;
-
-`;
-
-const SearchBarContainer = styled.div`
-  flex: 1.5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom:0;
-
- 
-`;
-
-const MainNavBar = styled.div`
-   display: flex;
-  align-items: center;
-  justify-content: center; /* Center-align the content */
-  gap: 20px; /* Add space between left and right sections */
-  padding: 10px 75px;
-`;
-const MainNavBarleft = styled.div`
-    display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex: 1; /* Allow it to grow and take equal space */
-`;
-const MainNavBarigth = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1; /* Allow it to grow and take equal space */
-`;
-const Wrapper = styled.header`
-  box-shadow: 0 2px 8px rgb(229 232 232 / 75%);
+const TopWrapper = styled.header`
+  /* box-shadow: 0 2px 8px rgb(229 232 232 / 75%); */
   position: fixed;
   top: 0;
   z-index: 99;
-  padding: 10px 5px;
+  padding: 12px 0;
   width: 100%;
+  height: 40px;
   color: ${Theme.primaryText};
-  background-color: #ffffff;
+  background-color:rgb(246 241 235 / 73%);
   display: flex;
-  flex-direction: column;
   align-items: center;
   transition: max-height .3s ease-out;
 `;
+const BtmWrapper = styled.header`
+  position: fixed;
+  top: 40px;
+  z-index: 99;
+  padding: 12px 0;
+  width: 100%;
+  height: 64px;
+  background-color:rgb(246 241 235 / 73%);
+  display: flex;
+  align-items: center;
+`;
 
 const Logo = styled.img`
+  position: absolute; 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   height: 50px;
   width: 150px;
   object-fit: contain;
-  padding-left: 10px;
+  z-index: 999; 
 `;
 
-// const RightWrapper = styled.div`
-//   display: flex;
-//   justify-content: flex-end;
-//   flex: 1;
-//   margin-right: 50px;
-// `;
-
-// const LinkWrapper = styled.ul`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-//   width: 800px;
-//   @media (max-width: 1000px) {
-//     width: auto;
-//   }
-// `;
-
-const LinkWrapper = styled.ul`
+const LeftWrapper = styled.div`
   display: flex;
-  justify-content:flex-end;
-  gap: 20px;
-  list-style: none;
+  justify-content: flex-start;
+  flex: 1;
+  margin-left: 20px;
+
 `;
 
-// const NavigationLink = styled.a`
-//   color: ${Theme.primaryText};
-//   text-decoration: none;
-//   font-size: 16px;
-//   font-weight: 500;
-//   opacity: 1;
-//   transition: 0.2s ease-in-out all;
-//   &:hover {
-//     opacity: 0.7;
-//   }
-//   @media (max-width: 1000px) {
-//     display: none;
-//   }
-// `;
+
 const NavigationLink = styled.a`
-  text-decoration: none;
-  font-size: 16px;
   color: ${Theme.primaryText};
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 1;
+  transition: 0.2s ease-in-out all;
   &:hover {
-    opacity: 0.8;
+    opacity: 0.95;
+  }
+  @media (max-width: 1000px) {
+    display: none;
   }
 `;
 
@@ -402,7 +250,7 @@ const SearchContainer = styled.div`
   flex-direction: row;
   align-items: center;
   position: absolute;
-  background-color: white;
+  background-color: red;
   justify-content: center;
   position: fixed;
   z-index: 9;
@@ -413,18 +261,7 @@ const IconsWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const IconContainer = styled.button`
-background: none;
-border: 0px;
-width: 40px;
-transition: 0.2s ease-in-out all;
-&:hover{
-  transform: scale(0.95);
-}
-&:active{
-  transform: scale(0.85);
-}
-`
+
 
 const ProfileName = styled.span`
 font-size  : 16px;
@@ -434,40 +271,111 @@ margin-left: 15px;
 color : ${Theme.secondaryText};
 text-overflow: ellipsis;
 `
+const IconContainer = styled.button`
+background: none;
+border: 0px;
+width: 40px;
+transition: 0.2s ease-in-out all;
+&:hover{
+  opacity: 0.95;
+}
+&:active{
+  opacity: 0.95;
+}
+`
 
+const RightWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; 
+  flex: 1; 
+  margin-right: 20px; 
+`;
+
+const LinkWrapper = styled.ul`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center; 
+  width: 300px;
+  margin-right:30px;
+  @media (max-width: 1000px) {
+    width: auto;
+  }
+`;
+
+const ListingWrapper = styled.ul`
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center; 
+  width: 300px;
+  margin-right:30px;
+  @media (max-width: 1000px) {
+    width: auto;
+  }
+`;
+
+const CartWrapper = styled.button`
+  margin-right: 80px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  margin-left: 20px; 
+  
+  &:hover {
+    transform: scale(0.95); 
+  }
+
+  &:active {
+    transform: scale(0.85);
+  }
+
+  @media (max-width: 1000px) {
+    justify-content: center;
+  }
+`;
 
 const ProfileIconContainer = styled.button`
+  display: flex;
+  align-items: center;
   background: none;
   border: 0px;
   margin-left: 20px;
-  width: 90px;
-  display: flex;
-  align-items: center;
-  transition: 0.2s ease-in-out all;
-  &:hover{
-  transform: scale(0.95);
-}
-&:active{
-  transform: scale(0.85);
-}
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 
-`
+  &:hover {
+    transform: scale(0.95);
+  }
 
-// const SearchBoxContainer = styled.div`
-//   width: 50%;
-//   margin-top: 50px;
-//   max-width: 800px;
-//   min-width: 500px;
-//   @media (max-width: 480px) {
-//     min-width: 80vw;
-//   }
-// `;
-
-const SearchBoxContainer = styled.div`
-  width: 50%;
-  max-width: 800px;
+  &:active {
+    transform: scale(0.85);
+  }
 `;
 
+
+const CartText = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  margin-left: 8px;
+  color: ${Theme.primaryText};
+
+  &:hover {
+    opacity: 0.95;
+  }
+`;
+const SearchBoxContainer = styled.div`
+  position: fixed;
+  margin-left:200px;
+  top: 40px; 
+  z-index: 100; 
+  width: 400px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+`;
 
 const ProfileAvatar = styled.img`
   width: 30px;
@@ -475,5 +383,35 @@ const ProfileAvatar = styled.img`
   border-radius: 24px;
   object-fit: cover;
 `
+
+const MenuContainer = styled.button`
+  background: none;
+  margin-left: 30px;
+  border: 0px;
+  display: flex;
+  align-items: center;
+  gap: 8px; 
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(0.95);
+  }
+
+  &:active {
+    transform: scale(0.85);
+  }
+`;
+
+const MenuText = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  color: ${Theme.primaryText};
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8; 
+  }
+`;
 
 export default Header;

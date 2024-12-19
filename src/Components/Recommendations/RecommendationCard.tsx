@@ -20,6 +20,7 @@ interface RecommendationCardType {
   onMouseDown: () => void;
   onMouseUp: () => void;
   source?: string;
+  price?:string;
 }
 
 const RecommendtionCard: React.FC<RecommendationCardType> = ({
@@ -33,7 +34,7 @@ const RecommendtionCard: React.FC<RecommendationCardType> = ({
   onContextMenu,
   onMouseDown,
   onMouseUp,
-  source = "",
+ price=""
 }) => {
   const { getText } = useContext(LanguageContext);
   const label =video ? getText("Watch now", SearchConfigTranslations, "watchNow"):getText("Learn more", SearchConfigTranslations, "learnMore")
@@ -63,17 +64,13 @@ const RecommendtionCard: React.FC<RecommendationCardType> = ({
       </ImageContainer>
       }
       <TextWrapper>
-        <div style={{ textAlign: "left" }}>
+        <div style={{textAlign: "left", minHeight: "85px"}}>
           <Title>{title}</Title>
-          <p>{"$ " + recommendation.raw.ec_price}</p>
         </div>
-        <SubTitle>{description}</SubTitle>
-        <ReferralLink>
-          {label}
-          <div style={{ marginLeft: "5px", color: Theme.primary}}>
-            <Icon icon={chevronRight} />
-          </div>
-        </ReferralLink>
+        <div style={{textAlign: "left"}}>
+          {price}
+        </div>
+
       </TextWrapper>
     </MainWrapper>
   );
@@ -95,7 +92,7 @@ export const SkeletonRecommendtionCard: React.FC = () => {
 
 const ImageContainer = styled.div`
   overflow: hidden;
-  border-radius: 16px 16px 0px 0px;
+  /* border-radius: 16px 16px 0px 0px; */
 `;
 
 const Image = styled.img`
@@ -103,13 +100,16 @@ const Image = styled.img`
   width: 100%;
   object-fit: cover;
   transition: 0.2s ease-in-out all;
+  padding: 10px 10px;
 `;
 const TextWrapper = styled.div`
   display: flex;
   width: fit-content;
   align-items: start;
   padding: 10px 10px;
+  font-family: "Orator";
   flex-direction: column;
+  height: 50px;
   gap: 5px;
   flex-grow: 1; // Allow TextWrapper to grow and fill available space
   justify-content: space-between;
@@ -123,37 +123,38 @@ const Title = styled.a`
   font-size: 20px;
   color: ${Theme.primaryText};
   text-align: left;
+  min-height: 250px !important;
 `;
 
-const SubTitle = styled.span`
-  font-family: inherit;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 16px;
-  color: gray;
-  display: -webkit-box;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  line-clamp: 3; 
-  -webkit-box-orient: vertical;
-  width: 280px;
-  text-align: left;
-  margin-bottom: 10px;
-`;
+// const SubTitle = styled.span`
+//   font-family: inherit;
+//   font-style: normal;
+//   font-weight: 300;
+//   font-size: 16px;
+//   color: gray;
+//   display: -webkit-box;
+//   overflow: hidden;
+//   text-overflow: ellipsis;
+//   -webkit-line-clamp: 3;
+//   line-clamp: 3; 
+//   -webkit-box-orient: vertical;
+//   width: 280px;
+//   text-align: left;
+//   margin-bottom: 10px;
+// `;
 
-const ReferralLink = styled.a`
-  font-family: inherit;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  color: ${Theme.primary};
-  text-decoration: none;
-  display: flex;
-  align-self: flex-start;
-  opacity: 0.8;
-  cursor: pointer;
-`;
+// const ReferralLink = styled.a`
+//   font-family: inherit;
+//   font-style: normal;
+//   font-weight: 400;
+//   font-size: 16px;
+//   color: ${Theme.primary};
+//   text-decoration: none;
+//   display: flex;
+//   align-self: flex-start;
+//   opacity: 0.8;
+//   cursor: pointer;
+// `;
 
 const MainWrapper = styled.div`
   display: flex;
@@ -161,12 +162,11 @@ const MainWrapper = styled.div`
   justify-content: space-between;
   flex: 1; // Allow flex children to grow and shrink
   width: 300px;
-  border-radius: 16px;
-  border: 1px solid #e5e8e8;
-  background: white;
+  border-radius: 0px;
+  /* border: 1px solid #e5e8e8; */
   cursor: pointer;
-  height: 100%; // Ensure the card takes up the full height
-
+  height: 400px !important; // Ensure the card takes up the full height
+  background-color: #F6F1EB;
   &:hover ${Title} {
     color: ${Theme.primary};
   }
@@ -175,9 +175,6 @@ const MainWrapper = styled.div`
     transform: scale(1.03);
   }
 
-  &:hover ${ReferralLink} {
-    opacity: 1;
-  }
 
   @media (max-width: 480px) {
     width: 90vw;

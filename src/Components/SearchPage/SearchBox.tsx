@@ -70,7 +70,9 @@ const SearchBoxRenderer: FunctionComponent<SearchBoxProps> = (props) => {
                 <EndButtons>
                   { 
                     state.value.length > 0 && (
-                      <ClearButton onClick={() => controller.updateText("")}>
+                      <ClearButton onClick={() => {
+                        localStorage.setItem(STANDALONE_SEARCHBOX_KEY, JSON.stringify({value: ""}));
+                        controller.updateText("")}}>
                         <CloseIcon/>
                       </ClearButton>
                     )

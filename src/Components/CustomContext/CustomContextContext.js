@@ -6,6 +6,7 @@ import { buildContext, buildDictionaryFieldContext } from "@coveo/headless";
 import { buildContext as buildContextCommerce } from "@coveo/headless/commerce";
 import { LanguageContext } from "../Internationalization/LanguageUtils";
 import { InternationalizationEnabled, DefaultLanguage } from "../../config/InternationalizationConfig";
+import { websiteContextValue } from '../../config/SearchConfig';
 
 
 export const settingContextFromEngineFirstTime = (engine) => {
@@ -24,6 +25,8 @@ export const settingContextFromEngineFirstTime = (engine) => {
   const { ContextSetObject, DictionaryContextSetObject } = configureContext(filterdContext);
 
   controller.set(ContextSetObject);
+  controller.set({ website: websiteContextValue});
+
   if (InternationalizationEnabled)
     controller.add("language", filterdProfile[0]?.language ? filterdProfile[0]?.language : DefaultLanguage);
   dictionaryContext.set(DictionaryContextSetObject);
@@ -84,6 +87,8 @@ const CustomContextProvider = ({ children }) => {
       changeLanguage(filterdProfile[0]?.language ? filterdProfile[0]?.language : DefaultLanguage);
 
     controller.set(ContextSetObject);
+    controller.set({ website: websiteContextValue});
+
     if (InternationalizationEnabled)
       controller.add("language", selectedLanguage);
     dictionaryContext.set(DictionaryContextSetObject);
@@ -99,6 +104,9 @@ const CustomContextProvider = ({ children }) => {
     const { ContextSetObject, DictionaryContextSetObject } = configureContext(filterdContext);
     
     controller.set(ContextSetObject);
+    controller.set({ website: websiteContextValue});
+
+
     if (InternationalizationEnabled)
       controller.add("language", selectedLanguage);
     dictionaryContext.set(DictionaryContextSetObject);

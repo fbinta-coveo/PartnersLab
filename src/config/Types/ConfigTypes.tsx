@@ -47,6 +47,7 @@ export interface SearchPageTabConfigType {
   isActive : boolean;
   sideBarRecommendationConfig? : sideBarRecommendationConfigType[];
   facetToInclude? : String[];
+  commerceTab? : boolean;
 }
 
 export interface RecommendationType {

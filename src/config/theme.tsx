@@ -2,11 +2,11 @@ import { createTheme } from "@mui/material/styles";
 import { red } from "@mui/material/colors";
 
 export const Theme = {
-  primary: "#5d237d",
+  primary: "#666",
   primaryText: "#282829",
+  hermes: "#F6F1EB",
 
-
-  button: "#752e9c",
+  button: "#444444",
   buttonText : '#FFFFFF',
 
 
@@ -15,10 +15,10 @@ export const Theme = {
 
 
   searchBarTitle : '#FFFFFF',
-  searchIcon: "#752e9c",
-  searchTabBar: "#5d237d",
+  searchIcon: "#000",
+  searchTabBar: "#F6F1EB",
   searchTabBorder: "#FFFFFF",
-  searchBarBackground: "#451c5c",
+  searchBarBackground: "#F6F1EB",
   searchTabText : "#FFFFFF",
 
   footer: "#FFFFFF",
@@ -47,7 +47,7 @@ const theme = createTheme({
   },
   typography: {
     fontFamily:
-      "canada-type-gibson, Gibson,Noto Sans, Avenir, Helvetica, Arial, sans-serif",
+      "Hermes,Orator, canada-type-gibson, Gibson,Noto Sans, Avenir, Helvetica, Arial, sans-serif",
     // Material-UI uses rem units for the font size. This will change the base size for the entire search page
     // More info at https://material-ui.com/customization/typography/#font-size
     fontSize: 16,

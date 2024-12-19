@@ -21,6 +21,15 @@ interface RecommendationCarouselProps {
   config: RecommendationType;
 }
 
+
+function getFirstImageUrl(imageField: string): string { 
+  if (!imageField || typeof imageField !== "string") { 
+    return ""; // Return an empty string if the input is invalid } 
+  
+  }
+  return imageField.split(";")[0] || ""; 
+}
+
 const RecommendationCarousel =({config, controller, engine}: RecommendationCarouselProps) => {
 
   const { getText } = useContext(LanguageContext);
@@ -99,7 +108,8 @@ const RecommendationCarousel =({config, controller, engine}: RecommendationCarou
             <CarouselCardWrapper>
               {state.recommendations.length > 0 ? (
                 getVisibleRecommendations().map((recommendation, index) => {
-                  const temp: unknown = recommendation.raw[`${config.imageField}`];
+                  const temp: unknown = getFirstImageUrl(recommendation.raw.ec_images as string);
+
                   const imageURL: string = temp as string;
                   const isFocused = index === 2; // the middle one is always focused
                   return (
@@ -150,7 +160,7 @@ const MainWrapper = styled.div`
   border-radius: 24px;
   text-align : center;
   position: relative;
-  top: -40px;
+  top: 40px;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;

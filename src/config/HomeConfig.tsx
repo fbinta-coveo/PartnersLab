@@ -1,13 +1,8 @@
-import HeroImage from "../assets/HeroImage.jpg";
+import HeroImage from "../assets/Hero.png";
 import CoveoLogo from "../assets/CoveoLogo.svg";
+import HermesLogo from "../assets/HermesLogo.png"
 import RecommendationDefault from "../assets/Recommendation.jpg";
 import { RecommendationType } from "./Types/ConfigTypes";
-import { ic_menu } from 'react-icons-kit/md/ic_menu';
-import { ic_shopping_bag_outline } from 'react-icons-kit/md/ic_shopping_bag_outline';
-import { ic_email_outline } from 'react-icons-kit/md/ic_email_outline';
-import { search } from 'react-icons-kit/feather/search';
-import {heart} from 'react-icons-kit/feather/heart'
-import {plane} from 'react-icons-kit/fa/plane'
 
 /* To import your Demo Logo
 1. Place the logo in the assets Folder
@@ -20,69 +15,32 @@ import {plane} from 'react-icons-kit/fa/plane'
 3. Replace the CoveoLogo with DemoLogo below.
 */
 
-export const HeaderLogo = CoveoLogo;
+export const HeaderLogo = HermesLogo;
 
-export const FooterLogo = CoveoLogo;
+export const FooterLogo = HermesLogo;
 
 export const DefaultRecommendationImage = RecommendationDefault;
 
 // TODO When generating JSON, dynamically generate internationalization config in admin console to include these elements.
 export const HeaderConfig = [
   {
-    title: 'Airport Shop',
-    redirectTo: '/shop',
-    icon: plane, // Icon object
-  },
-
-  {
-    title: '',
-    redirectTo: '/search',
-    icon: heart, // Icon object
-  },
-
-  {
-    title: '',
-    redirectTo: '/contact',
-    icon: ic_shopping_bag_outline, // Icon object
-  },
-];
-
-
-
-export const TopHeaderConfig = [
-  {
-    title: "Products",
+    title: "Find a store",
     redirectTo: "/home",
   },
   {
-    title: "Applications",
-    redirectTo: "/",
+    title: "Contact Us",
+    redirectTo: "/home",
   },
-  {
-    title: "Service & Support",
-    redirectTo: "/",
-  },
-  {
-    title: "Ressources",
-    redirectTo: "/",
-  },
-  {
-    title: "Our Company",
-    redirectTo: "/",
-  },
-  
 ];
 
-
-
 export const HeroConfig = {
-  title: "The only AI platform specifically built to make every digital experience delightful, relevant, and profitable",
-  description: "Advanced search. Relevant recommendations. Unrivaled personalization",
-  background: HeroImage,
-  buttonText: "Explore",
+  title: "Sweet wonders",
+  description: "A meeting of winter pleasures.",
+  background: "#F6F1EB",
+  buttonText: "Create your combination",
   onClickButtonRedirect: "/search",
   width : "100%",
-  height: "800px",
+  height: "1050px",
 
   // Hero Image Text CSS config
   titleFontSize : "32px",
@@ -96,21 +54,11 @@ export const HeroConfig = {
 };
 
 export const HomeRecommendationConfig: RecommendationType[] = [
+
   {
-    title: "Recommendations",
-    description: "Here are your personalized recommendations",
-    numberOfResults: 15,
-    imageField: "ec_images",
-    pipeline: "cmh-recommendations-sandbox",
-    searchHub: "default",
-    id: "Recommendation",
-    active : true,       // changing to "false" will hide this recommendation
-    type: "slider" // "list" | "carousel" | "slider"
-  },
-  {
-    title: "Recommendations",
-    description: "Here are your personalized recommendations",
-    numberOfResults: 15,
+    title: "",
+    description: "",
+    numberOfResults: 8,
     imageField: "ec_images",
     pipeline: "cmh-recommendations-sandbox",
     searchHub: "default",
@@ -119,8 +67,8 @@ export const HomeRecommendationConfig: RecommendationType[] = [
     type: "carousel" // "list" | "carousel" | "slider"
   },
   {
-    title: "Recommendations",
-    description: "Here are your personalized recommendations",
+    title: "",
+    description: "",
     numberOfResults: 8,
     imageField: "ec_images",
     pipeline: "cmh-recommendations-sandbox",
@@ -129,6 +77,46 @@ export const HomeRecommendationConfig: RecommendationType[] = [
     active : true,       // changing to "false" will hide this recommendation
     type: "list" // "list" | "carousel" | "slider"
   },
+  {
+    title: "",
+    description: "",
+    numberOfResults: 8,
+    imageField: "ec_images",
+    pipeline: "cmh-recommendations-sandbox",
+    searchHub: "default",
+    id: "Recommendation",
+    active : true,       // changing to "false" will hide this recommendation
+    type: "slider" // "list" | "carousel" | "slider"
+  },
+
+
+
+
+
+
+
+  // {
+  //   title: "Recommendations",
+  //   description: "Here are your personalized recommendations",
+  //   numberOfResults: 15,
+  //   imageField: "ec_images",
+  //   pipeline: "cmh-search-hermes",
+  //   searchHub: "default",
+  //   id: "Recommendation",
+  //   active : true,       // changing to "false" will hide this recommendation
+  //   type: "carousel" // "list" | "carousel" | "slider"
+  // },
+  // {
+  //   title: "Recommendations",
+  //   description: "Here are your personalized recommendations",
+  //   numberOfResults: 15,
+  //   imageField: "ec_images",
+  //   pipeline: "cmh-search-hermes",
+  //   searchHub: "default",
+  //   id: "Recommendation",
+  //   active : true,       // changing to "false" will hide this recommendation
+  //   type: "carousel" // "list" | "carousel" | "slider"
+  // },
 ]
 
 export const EnableAuthentication = false;

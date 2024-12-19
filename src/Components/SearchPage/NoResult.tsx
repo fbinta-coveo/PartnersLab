@@ -144,6 +144,7 @@ const NoResult: React.FC = () => {
 export default NoResult;
 
 const MainWrapper = styled.div`
+    height: 100%;
 /* position: relative;
 display: flex;
 flex-direction: column;
@@ -165,10 +166,11 @@ align-items: center; */
 const Title = styled.h2`
   font-size: 24px;
   font-weight: 500;
-  font-family: inherit;
+    font-family: "Orator";
   color: ${Theme.primaryText};
   margin-top: 30px;
   margin-bottom: 10px;
+
 `;
 
 const SubTitle = styled.p`
@@ -183,8 +185,7 @@ const CardWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+background-color: #F6F1EB;
 /*   align-items: center;
   justify-content: center; */
-  max-width: 1500px;
-  margin-top: 20px;
 `;

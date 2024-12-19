@@ -20,12 +20,12 @@ const SummaryRenderer = ({ summaryController }) => {
     <>
       {!state.isLoading && state.hasProducts && (
         <SummaryContainer>
-          {getText("Results of for", SearchConfigTranslations, "summaryResults").split(" ")[0]}{" "}
+          {getText("Results", SearchConfigTranslations, "summaryResults").split(" ")[0]}{" "}
           <span>{state.firstProduct}</span>-<span>{state.lastProduct}</span>{" "}
-          {getText("Results of for", SearchConfigTranslations, "summaryResults").split(" ")[1]}{" "}
+          {getText("Results", SearchConfigTranslations, "summaryResults").split(" ")[1]}{" "}
           <span>{state.totalNumberOfProducts}
             </span>{" "}<>{state.query && <>
-              {getText("Results of for", SearchConfigTranslations, "summaryResults").split(" ")[2]}{" "}
+              {getText("Results", SearchConfigTranslations, "summaryResults").split(" ")[2]}{" "}
             <span>{state.query}</span></>}</>
         </SummaryContainer>
       )}

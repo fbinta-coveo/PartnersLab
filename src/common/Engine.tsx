@@ -7,6 +7,7 @@ import {
 } from '@coveord/platform-client';
 import { KEY_NAME_CONTEXT_DATA, KEY_NAME_PROFILE_SELECTED } from '../config/ProfileConfig';
 import { buildCommerceEngine } from '@coveo/headless/commerce';
+import { buildProductRecommendationEngine } from '@coveo/headless/product-recommendation';
 
 const PROFILE_SELECTED : string | null = localStorage.getItem(KEY_NAME_PROFILE_SELECTED);
 const CONTEXT_DATA = localStorage.getItem(KEY_NAME_CONTEXT_DATA);
@@ -20,9 +21,28 @@ if(CONTEXT_DATA !==null && CONTEXT_DATA.length > 0 && typeof PROFILE_SELECTED ==
 }
 
 
+export const analyticsClientMiddleware = (eventName:string, payload:any) => { 
+  console.log("testing analytics middleware", eventName, payload);
+  const visitorID = localStorage.getItem('visitorId')? localStorage.getItem('visitorId') : null;
+
+  if(visitorID){
+    payload.visitorId = visitorID;
+    payload.clientId = visitorID;
+  }
+
+  return payload;
+    
+};
 
 
+if (typeof window === 'object' && window['coveoua']) {
+  window!['coveoua']('set', 'currencyCode', 'EUR');
+  window!['coveoua']('init',  process.env.REACT_APP_COMMERCE_ENGINE_API_KEY!, getOrganizationEndpoints(process.env.REACT_APP_ORGANIZATION_ID!).analytics);
 
+  // preload the visitorId from coveoua -
+  // we want to initialize before the different Search Engines create their own simultaneously.
+  /* window!['coveoanalytics']?.getCurrentClient()?.getCurrentVisitorId(); */
+}
 
 const getEndpointToLocalServer = () => {
   if (!process.env.REACT_APP_SERVER_PORT) {
@@ -51,12 +71,17 @@ export async function getSearchToken() {
 
 // Not used in the GDE-CAPI but kept here for reference
 export async function initializeHeadlessEngine() {
+
+
   return buildSearchEngine({
     configuration: {
       organizationEndpoints : getOrganizationEndpoints(process.env.REACT_APP_ORGANIZATION_ID!),
       organizationId: process.env.REACT_APP_ORGANIZATION_ID!,
       accessToken: await getSearchToken(),
       renewAccessToken: getSearchToken,
+      analytics: {  
+        analyticsClientMiddleware,
+      },
       search :{
         searchHub : "default",
       }
@@ -81,15 +106,30 @@ export async function initializeCommerceHeadlessEngine() {
         view: {
           url: process.env.REACT_APP_COMMERCE_ENGINE_URL + window.location.pathname,
         },
+        capture: true
       },
       analytics : {
         trackingId : process.env.REACT_APP_COMMERCE_ENGINE_TRACKING_ID,
-
+        analyticsClientMiddleware,
       }
     },
   });
 }
 
+export async function initializeProductRecommendationEngine(searchhub = "") {
+  return buildProductRecommendationEngine({
+    configuration: {
+      organizationEndpoints : getOrganizationEndpoints(process.env.REACT_APP_ORGANIZATION_ID!),
+      organizationId: process.env.REACT_APP_ORGANIZATION_ID!,
+      accessToken: await getSearchToken(),
+      renewAccessToken: getSearchToken,
+      searchHub : searchhub? searchhub : process.env.REACT_APP_PRODUCT_RECOMMENDATION_ENGINE_SEARCH_HUB!,
+      analytics: {
+        analyticsClientMiddleware 
+      },
+    },
+  });
+}
 
 async function ensureClientTokenGenerated() {
   const platform: PlatformClient = new PlatformClient({

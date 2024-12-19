@@ -17,6 +17,15 @@ interface RecommendationListProps {
     engine: any;
 }
 
+function getFirstImageUrl(imageField: string): string { 
+  if (!imageField || typeof imageField !== "string") { 
+    return ""; // Return an empty string if the input is invalid } 
+  
+  }
+  return imageField.split(";")[0] || ""; 
+}
+
+
 const RecommendationList = (props: RecommendationListProps) => {
 
     const { config, controller, engine } = props;
@@ -60,7 +69,7 @@ const RecommendationList = (props: RecommendationListProps) => {
         <CardWrapper>
         {state.recommendations.length > 0 ? (
             state.recommendations.slice(0, NumberOfResults).map((recommendation) => {
-              const temp: unknown = recommendation.raw[`${config.imageField}`];
+              const temp: unknown = getFirstImageUrl(recommendation.raw.ec_images as string);
               const imageURL: string = temp as string;
               return (
                 <div key={recommendation.title + recommendation.uniqueId}>
@@ -94,7 +103,7 @@ export default RecommendationList
 const MainWrapper = styled.div`
   width: 95%;
   max-width: 1800px;
-  background-color: white;
+  /* background-color: white; */
   border-radius: 24px;
   text-align: center;
   position: relative;
@@ -103,7 +112,7 @@ const MainWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0px 10px 25px rgba(229, 232, 232, 0.6);
+  /* box-shadow: 0px 10px 25px rgba(229, 232, 232, 0.6); */
   margin-bottom: 30px;
 `;
 
